@@ -6,7 +6,7 @@ public class GameController : MonoBehaviour
 {
     public static GameController instance { get; private set; }
 
-    public GameObject[] navPoints;
+    public GameObject[] navPoints; // Array of empty game objects used as nodes to navigate between
 
     // Used to initialise singleton
 	void Awake ()

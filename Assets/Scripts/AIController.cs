@@ -10,8 +10,7 @@ public class AIController : MonoBehaviour
 
 	[Header("Movement")]
 	public float speed = 0.5f;
-	public float turnDeadzone = 0.3f;
-	Vector3 direction, heading;
+	Vector3 direction;
 
 	// Use this for initialization
 	void Start ()
@@ -26,20 +25,22 @@ public class AIController : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		// Move the AI towards the current node
 		transform.position += (direction * speed) * Time.deltaTime;
+	}
+
+	void OnTriggerEnter2D (Collider2D col)
+	{
+		// Check when we need to turn
+		transform.position = col.transform.position;
+		ChangeDirection();
 	}
 
     // Handle changing the AI's direction when it hits a corner
 	void ChangeDirection ()
 	{
-		nodeIndex++;
+		nodeIndex++; // Change the node we will now move towards
 		direction = gc.navPoints[nodeIndex + 1].transform.position - transform.position;
 		direction = direction / direction.magnitude;
-	}
-
-	void OnTriggerEnter2D (Collider2D col)
-	{
-		transform.position = col.transform.position;
-		ChangeDirection();
 	}
 }
