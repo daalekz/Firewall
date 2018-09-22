@@ -31,9 +31,17 @@ public class AIController : MonoBehaviour
 
 	void OnTriggerEnter2D (Collider2D col)
 	{
-		// Check when we need to turn
-		transform.position = col.transform.position;
-		ChangeDirection();
+		// Check if we have hit the end of the path
+		if (col.tag == "Finish")
+		{
+			Destroy(this.gameObject);
+		}
+		else
+		{
+		    // Check when we need to turn
+		    transform.position = col.transform.position;
+		    ChangeDirection();
+		}
 	}
 
     // Handle changing the AI's direction when it hits a corner
