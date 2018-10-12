@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using System;
 
+//enum represents the types of objects that can be present on the tile
 public enum TileType
 {
     path,
@@ -11,8 +12,6 @@ public enum TileType
     turret,
     empty
 }
-
-//https://unity3d.college/2017/10/08/simple-unity3d-snap-grid-system/
 
 public class MapTile 
 {
@@ -59,6 +58,8 @@ public class MapTile
     }
 }
 
+
+//class is a number of static methods that can used for data processing (i.e. not object specific) 
 public class DeployTools
 {
     public static MapTile SearchTiles(Vector3 Search_Position, List<MapTile> Search_List)
@@ -87,20 +88,39 @@ public class DeployTools
         }
     }
 
-    public static TileType EnumFromInt()
+    public static Tower SelectTower(List<Tower> towers, Vector3 Search_Position)
     {
-        return TileType.empty;
+        foreach(Tower tower in towers)
+        {
+            if (tower.Position.x == Search_Position.x && tower.Position.y == Search_Position.y)
+            {
+                return tower;
+            }
+        }
+
+        return null;
+    }
+
+    public static Tower GetTower(List<Tower> towers, Tower selected_tower)
+    {
+        foreach (Tower tower in towers)
+        {
+            if (selected_tower == tower)
+            {
+                return tower;
+            }
+        }
+
+        return null;
     }
 }
 
+/*
+Class taken and modified from:
+https://unity3d.college/2017/10/08/simple-unity3d-snap-grid-system/
+*/
 public class Grid_Setup : MonoBehaviour {
-    [SerializeField]
     private float size = 1f;
-    [SerializeField]
-    private float cells_high = 1f;
-    [SerializeField]
-    private float cells_wide = 1f;
-
     private List<MapTile> tiles = new List<MapTile>();
 
     private Map game_map;
@@ -110,32 +130,41 @@ public class Grid_Setup : MonoBehaviour {
         game_map = GetMapData();
         OnDraw(game_map);
     }
-
-
-
-
+    
     // Update is called once per frame
     void Update() {
 
     }
+    
 
+   //reads through a data file to create the game map
     public Map GetMapData()
     {
-        Debug.Log(Directory.GetCurrentDirectory());
         string file_path = "Assets/Data/sample_map.txt";
 
         int num_cells, width, height;
 
+        /*
+         * Note regarding file structure:
+         * First Line: Total Number of Cells
+         * Second Line: Number of horizontal blocks
+         * Third Line: Number of vertical block
+         * 4th - EOF: tile type (number that is converted to enum) - goes left to right, top to bottom
+         * (hence last line on file represent the bottom right tile
+        */
+        
         using (StreamReader sr = new StreamReader(file_path, true))
         {
-
             num_cells = Convert.ToInt32(sr.ReadLine());
 
             width = Convert.ToInt32(sr.ReadLine());
 
             height = Convert.ToInt32(sr.ReadLine());
 
+            //creates game map that will be returned
             Map method_map = new Map(num_cells, width, height);
+
+            //gets the tile x and y values, so when it called, it can be rendered
             for (float y = height; y > 0; y -= size)
             {
                 for (float x = 0; x < width; x += size)
@@ -145,7 +174,7 @@ public class Grid_Setup : MonoBehaviour {
                     if ((line = sr.ReadLine()) != null)
                     {
                         int line_value = Convert.ToInt32(line);
-                        Debug.Log(line_value);
+                        //creates a tile (from the calculated values and file data) and adds it to list within map obj
                         method_map.Map_Tiles.Add(new MapTile((TileType)line_value, point));
                     }
                     else
@@ -155,15 +184,13 @@ public class Grid_Setup : MonoBehaviour {
                 }
             }
             // Read the stream to a string, and write the string to the console.
-
             return method_map;
-           
         }
     }
-
+    
+    //for a given mouse position, the closest grid point is found
     public Vector3 GetNearestPointOnGrid(Vector3 position)
     {
-
         position -= transform.position;
 
         int xCount = Mathf.RoundToInt(position.x / size);
@@ -180,6 +207,7 @@ public class Grid_Setup : MonoBehaviour {
         return result;
     }
 
+    //draws the game squares 
     void OnDraw(Map map)
     {
         foreach(MapTile tile in map.Map_Tiles)
@@ -188,6 +216,7 @@ public class Grid_Setup : MonoBehaviour {
             cube.transform.position = tile.Position;
             cube.transform.localScale = new Vector3(0.9f, 0.9f, 0.1f);
 
+            //draws differently colored squares depending on the enum value
             switch (tile.Type)
             {
                 case (TileType.empty):
@@ -201,7 +230,6 @@ public class Grid_Setup : MonoBehaviour {
                 case (TileType.terrain):
                     cube.GetComponent<Renderer>().material.color = Color.green;
                     break;
-
             }
         }
     }
@@ -211,6 +239,22 @@ public class Grid_Setup : MonoBehaviour {
         get
         {
             return game_map.Map_Tiles;
+        }
+    }
+
+    public int Width
+    {
+        get
+        {
+            return game_map.Width;
+        }
+    }
+
+    public int Height
+    {
+        get
+        {
+            return game_map.Height;
         }
     }
 
