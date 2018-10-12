@@ -3,12 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
+
+/*
+ * Summary: 
+ * Class is used for the different elements that will be placed on the screen and fire at enemies
+*/
 public class Tower
 {
     private Vector3 _position;
     private GameObject rendered_tower;
     private bool _selected;
+    private float range;
+    private float fire_rate;
 
+    //two different constructors to allow for greater user flexibility
     public Tower(int x, int y)
     {
         rendered_tower = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -27,6 +35,7 @@ public class Tower
         shape_color.a = 0;
     }
 
+    //tell the program how the tower should be drawn
     public void Render()
     {
         rendered_tower.transform.position = _position;
@@ -41,7 +50,7 @@ public class Tower
         }
     }
 
-
+    //returns if the given tower has been selected
     public bool Selected
     {
         get
@@ -55,6 +64,7 @@ public class Tower
         }
     }
     
+    //returns the object component on the class
     public GameObject TowerObj
     {
         get
@@ -68,6 +78,7 @@ public class Tower
         }
     }
 
+    //return the position of the object
     public Vector3 Position
     {
         get
@@ -178,10 +189,15 @@ public class Deploy : MonoBehaviour
     public Grid_Setup grid;
     public Camera cam;
     private static Tower selected_tower;
+    private GameObject hover_sphere;
+
 
     private void Awake()
     {
         grid = FindObjectOfType<Grid_Setup>();
+
+        hover_sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        hover_sphere.transform.localScale = new Vector3(0, 0, 0);
     }
 
     //draws sphere when clicked on a given tile
@@ -198,7 +214,7 @@ public class Deploy : MonoBehaviour
             }
         }
         
-        if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.LeftControl))
+            if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.LeftControl))
         {
             if (Physics.Raycast(ray, out hitInfo))
             {
@@ -238,25 +254,42 @@ public class Deploy : MonoBehaviour
         }
 
         RenderTowers();
+
+        //hoverplacement
+        if (Physics.Raycast(ray, out hitInfo))
+        {
+            var finalPosition = grid.GetNearestPointOnGrid(hitInfo.point);
+            finalPosition.z = 0;
+
+            HoverPlacement(finalPosition);
+        }
+        else
+        {
+            hover_sphere.transform.localScale = new Vector3(0, 0, 0);
+        }
     }
 
     private void HoverPlacement(Vector3 mousePosition)
     {
-            var finalPosition = grid.GetNearestPointOnGrid(mousePosition);
+        var finalPosition = grid.GetNearestPointOnGrid(mousePosition);
+        //finalPosition.z = -1;
 
-           //GameObject.CreatePrimitive(PrimitiveType.Cube).transform.position = finalPosition;
-
-            MapTile temp_tile = DeployTools.SearchTiles(finalPosition, grid.GameMap.Map_Tiles);
+        MapTile temp_tile = DeployTools.SearchTiles(finalPosition, grid.GameMap.Map_Tiles);
             
-            if (temp_tile == null)
-            {
-                return;
-            }
+        if (temp_tile == null)
+        {
+            hover_sphere.transform.localScale = new Vector3(0, 0, 0);
+            return;
+        }
 
-            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            sphere.transform.position = finalPosition;
-            var shape_color = sphere.GetComponent<Renderer>().material.color;
+
+        if (temp_tile.Type == TileType.empty)
+        {
+            hover_sphere.transform.localScale = new Vector3(1, 1, 1);
+            hover_sphere.transform.position = mousePosition;
+            var shape_color = hover_sphere.GetComponent<Renderer>().material.color;
             shape_color.a = 0.5f;
+        }    
     }
 
     private void PlaceCubeNear(Vector3 clickPoint)
@@ -278,10 +311,11 @@ public class Deploy : MonoBehaviour
         }
         else
         {
-
+            //add code to display overlay, if tower cannot be placed on it
         }
     }
 
+    //draws all of the towers on the board
     private void RenderTowers()
     {
         if (grid.GameMap.Map_Towers != null)

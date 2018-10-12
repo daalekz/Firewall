@@ -123,6 +123,7 @@ public class Grid_Setup : MonoBehaviour {
     private float size = 1f;
     private List<MapTile> tiles = new List<MapTile>();
 
+ 
     private Map game_map;
 
     // Use this for initialization
@@ -133,7 +134,6 @@ public class Grid_Setup : MonoBehaviour {
     
     // Update is called once per frame
     void Update() {
-
     }
     
 
