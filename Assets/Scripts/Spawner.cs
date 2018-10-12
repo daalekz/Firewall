@@ -4,29 +4,16 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-	public float spawnRate = 0.5f;
-	float spawnTimer = 0.0f;
+	public static Spawner instance { get; private set; }
 
-	[Header("Spawnable Units")]
-    public GameObject dummyUnit;
-
-	float timer;
-
-	// Use this for initialization
-	void Start ()
+	void Awake ()
 	{
-		//
+		if (instance != null) throw new System.Exception();
+		instance = this;
 	}
-	
-	// Update is called once per frame
-	void Update ()
+
+	public void Spawn(GameObject obj)
 	{
-		// Spawner time logic
-		spawnTimer += Time.deltaTime;
-		if (spawnTimer >= spawnRate)
-		{
-		    Instantiate(dummyUnit, transform.position, transform.rotation);
-			spawnTimer = 0.0f;
-		}
+		Instantiate(obj, transform.position, transform.rotation);
 	}
 }
