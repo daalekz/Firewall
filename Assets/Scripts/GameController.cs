@@ -1,30 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
     public static GameController instance { get; private set; }
+	private WaveController wc;
 
     public GameObject[] navPoints; // Array of empty game objects used as nodes to navigate between
+	public Text WaveDisplay;
 
-    // Used to initialise singleton
 	void Awake ()
 	{
 		if (instance != null) throw new System.Exception();
-
 		instance = this;
 	}
 
-	// Use this for initialization
 	void Start ()
 	{
-		//
+		wc = WaveController.instance;
 	}
-	
-	// Update is called once per frame
+
 	void Update ()
 	{
-		//
+		WaveDisplay.text = "Wave: " + wc.WaveCount.ToString();
 	}
 }

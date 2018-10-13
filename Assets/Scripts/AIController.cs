@@ -8,9 +8,9 @@ public class AIController : MonoBehaviour
 
 	int nodeIndex = 0;
 
-	[Header("Movement")]
-	public float speed = 0.5f;
-	Vector3 direction;
+	public EnemyType Type;
+	public Enemy data;
+	private Vector3 direction;
 
 	// Use this for initialization
 	void Start ()
@@ -20,13 +20,28 @@ public class AIController : MonoBehaviour
 		// Set the initial direction the AI will move in
 		direction = gc.navPoints[1].transform.position - gc.navPoints[0].transform.position;
 		direction = direction / direction.magnitude;
+
+		switch (Type)
+		{
+			case EnemyType.DDoS:
+			    data = new DDoS();
+				break;
+			
+			case EnemyType.Worm:
+			    data = new Worm();
+				break;
+
+			case EnemyType.Spyware:
+			    data = new Spyware();
+				break;
+		}
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
 		// Move the AI towards the current node
-		transform.position += (direction * speed) * Time.deltaTime;
+		transform.position += (direction * data.Speed) * Time.deltaTime;
 	}
 
 	void OnTriggerEnter2D (Collider2D col)
