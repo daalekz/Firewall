@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainMenuaController : MonoBehaviour {
+public class MainMenuController : MonoBehaviour {
 
 	//Active and inactive targets for the panel position
 	public Transform Active, Inactive;
