@@ -39,7 +39,7 @@ public class Deploy : MonoBehaviour
         }
         
         //selects a tower
-        if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.LeftControl))
+        if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl))
         {
             if (Physics.Raycast(ray, out hitInfo))
             {
@@ -152,12 +152,6 @@ public class Deploy : MonoBehaviour
                 shape_color.a = 0.5f;
                 break;
         }
- 
-        if (temp_tile.Type == TileType.turret)
-        {
-
-        }
-
         
     }
 
