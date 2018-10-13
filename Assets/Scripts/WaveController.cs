@@ -10,7 +10,8 @@ public class WaveController : MonoBehaviour
 
 	public GameObject[] Units;
 	private Queue<GameObject> wave;
-	private int WaveCount = 1;
+	[HideInInspector]
+	public int WaveCount = 1;
 	private bool WaveStarted = false;
 	private float timer  = 0.0f;
 	[SerializeField]
