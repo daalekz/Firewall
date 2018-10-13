@@ -12,11 +12,13 @@ public class MapTile
     {
         _tile_position = position;
         _tile_type = type;
+
     }
 
     public MapTile(Vector3 position)
     {
         _tile_type = TileType.empty;
+        position.z = 1;
         _tile_position = position;
     }
 

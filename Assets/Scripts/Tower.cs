@@ -37,6 +37,8 @@ public class Tower
     public void Render()
     {
         rendered_tower.transform.position = _position;
+        rendered_tower.GetComponent<Renderer>().sortingOrder = 2;
+
 
         if (_selected)
         {

@@ -21,6 +21,7 @@ public class Deploy : MonoBehaviour
 
         hover_sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         hover_sphere.transform.localScale = new Vector3(0, 0, 0);
+        hover_sphere.GetComponent<Renderer>().sortingOrder = 3;
     }
 
 

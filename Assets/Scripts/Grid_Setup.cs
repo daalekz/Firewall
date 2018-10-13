@@ -12,24 +12,82 @@ public class Grid_Setup : MonoBehaviour {
     private float size = 1f;
     private List<MapTile> tiles = new List<MapTile>();
 
- 
+    GameController gc;
     private Map game_map;
 
     // Use this for initialization
     void Start() {
+        gc = GameController.instance;
         game_map = GetMapData();
+        gc.navPoints = GetNavPoints();
+
         OnDraw(game_map);
     }
     
     // Update is called once per frame
     void Update() {
     }
+
+    public GameObject[] GetNavPoints()
+    {
+        string file_path = "Assets/Data/map_a_path.txt";
+        int array_size, x, y, i;
+        GameObject[] NavPoints;
+        GameObject parent_nav_points = GameObject.Find("NavPoints");
+
+
+        /*
+         * Note regarding file structure:
+         * First Line: Array Size
+         * 2nds - EOF: x, y, co-ordinates alternating
+        */
+
+        using (StreamReader sr = new StreamReader(file_path, true))
+        {
+            array_size = Convert.ToInt32(sr.ReadLine());
+            NavPoints = new GameObject[array_size];
+            BoxCollider2D boxcollider = gameObject.AddComponent<BoxCollider2D>();
+            boxcollider.isTrigger = true;
+            boxcollider.transform.localScale = new Vector2(0.01f, 0.01f);
+
+
+            for (i = 0; i < array_size; i++)
+            {
+                GameObject temp_nav = new GameObject();
+                x = Convert.ToInt32(sr.ReadLine());
+                y = Convert.ToInt32(sr.ReadLine());
+
+
+                if (x == 0)
+                {
+                    temp_nav.AddComponent<Spawner>();
+
+                }
+                else
+                {
+                    boxcollider = temp_nav.AddComponent<BoxCollider2D>();
+                    boxcollider.isTrigger = true;
+
+                }
+
+                temp_nav.transform.position = new Vector3(x, y, 0);
+                temp_nav.transform.localScale = new Vector3(0.01f, 0.01f, 1);
+                temp_nav.name = "NavPoint";
+
+
+                temp_nav.transform.parent = parent_nav_points.transform;
+
+                NavPoints[i] = temp_nav;
+            }
+            return NavPoints;
+        }
+    }
     
 
    //reads through a data file to create the game map
     public Map GetMapData()
     {
-        string file_path = "Assets/Data/sample_map.txt";
+        string file_path = "Assets/Data/map_a.txt";
 
         int num_cells, width, height;
 
@@ -99,11 +157,18 @@ public class Grid_Setup : MonoBehaviour {
     //draws the game squares 
     void OnDraw(Map map)
     {
-        foreach(MapTile tile in map.Map_Tiles)
+        
+        GameObject parent_path = GameObject.Find("Path");
+
+        parent_path.transform.localScale = new Vector3(map.Width, map.Height, 1);
+
+        foreach (MapTile tile in map.Map_Tiles)
         {
             GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            
             cube.transform.position = tile.Position;
-            cube.transform.localScale = new Vector3(0.9f, 0.9f, 0.1f);
+            cube.GetComponent<Renderer>().sortingOrder = 1;
+            cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
 
             //draws differently colored squares depending on the enum value
             switch (tile.Type)
@@ -114,10 +179,14 @@ public class Grid_Setup : MonoBehaviour {
 
                 case (TileType.path):
                     cube.GetComponent<Renderer>().material.color = Color.red;
+                    cube.transform.parent = parent_path.transform;
+                    cube.name = "MapTile";
+
                     break;
 
                 case (TileType.terrain):
                     cube.GetComponent<Renderer>().material.color = Color.green;
+                    cube.name = "TerrainTile";
                     break;
             }
         }
