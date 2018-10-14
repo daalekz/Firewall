@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class Enemy
 {
 	public int Health { get; private set; }
-	public float Speed { get; private set; }
+	public float Speed { get; set; }
 	public int Damage { get; private set; }
 	public int Value { get; private set; }
 	public readonly EnemyType Type;
@@ -23,4 +23,6 @@ public abstract class Enemy
 	{
 		Health -= damage;
 	}
+
+   
 }

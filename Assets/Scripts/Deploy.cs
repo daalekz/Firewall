@@ -170,7 +170,7 @@ public class Deploy : MonoBehaviour
 
             if (grid.GameMap.Map_Towers != null)
             {
-                grid.GameMap.Map_Towers.Add(new Tower(finalPosition));
+                grid.GameMap.Map_Towers.Add(new Tower(finalPosition, TowerType.Annihilator));
             }
         }
         else

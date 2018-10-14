@@ -32,7 +32,7 @@ public class Grid_Setup : MonoBehaviour {
     void Update() {
         foreach (Tower tower in game_map.Map_Towers)
         {
-            tower.Shoot(gc.WaveController.SpawnedObjects);
+            tower.Fire(gc.WaveController.SpawnedObjects);
         }
     }
 
