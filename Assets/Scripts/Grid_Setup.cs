@@ -11,12 +11,16 @@ https://unity3d.college/2017/10/08/simple-unity3d-snap-grid-system/
 public class Grid_Setup : MonoBehaviour {
     private float size = 1f;
     private List<MapTile> tiles = new List<MapTile>();
-
+    private float x_start, y_start;
     GameController gc;
     private Map game_map;
 
     // Use this for initialization
     void Start() {
+        //initalized the x and y values for the translation of the map
+        //so that it's centre can be and (0,0)
+        x_start = 0;
+        y_start = 0;
         gc = GameController.instance;
         game_map = GetMapData();
         gc.navPoints = GetNavPoints();
@@ -26,8 +30,13 @@ public class Grid_Setup : MonoBehaviour {
     
     // Update is called once per frame
     void Update() {
+        foreach (Tower tower in game_map.Map_Towers)
+        {
+            tower.Shoot(gc.WaveController.SpawnedObjects);
+        }
     }
 
+    //gets the path points that the AI will follow for the map
     public GameObject[] GetNavPoints()
     {
         string file_path = "Assets/Data/map_a_path.txt";
@@ -45,12 +54,15 @@ public class Grid_Setup : MonoBehaviour {
         using (StreamReader sr = new StreamReader(file_path, true))
         {
             array_size = Convert.ToInt32(sr.ReadLine());
+            //initializes the return array, with the size (based on text file line)
             NavPoints = new GameObject[array_size];
             BoxCollider2D boxcollider = gameObject.AddComponent<BoxCollider2D>();
             boxcollider.isTrigger = true;
             boxcollider.transform.localScale = new Vector2(0.01f, 0.01f);
-
-
+            
+            //assigns the first nav point a spawner script
+            //asssigns the 2nd - 2nd Last Navpoints a boxcollider2d component
+            //assigns the last navpoint nothing!
             for (i = 0; i < array_size; i++)
             {
                 GameObject temp_nav = new GameObject();
@@ -65,25 +77,31 @@ public class Grid_Setup : MonoBehaviour {
                 }
                 else
                 {
-                    boxcollider = temp_nav.AddComponent<BoxCollider2D>();
-                    boxcollider.isTrigger = true;
+                    if (i < (array_size - 1))
+                    {
+                        boxcollider = temp_nav.AddComponent<BoxCollider2D>();
+                        boxcollider.isTrigger = true;
+                    }
 
                 }
 
-                temp_nav.transform.position = new Vector3(x, y, 0);
+                //sets the positions (with the translation) for the navpoint
+                temp_nav.transform.position = new Vector3(x + x_start, y + y_start, 0);
                 temp_nav.transform.localScale = new Vector3(0.01f, 0.01f, 1);
                 temp_nav.name = "NavPoint";
 
-
+                //assigns the navpoints to NavPoints parents element
                 temp_nav.transform.parent = parent_nav_points.transform;
-
+                //assigns the nav element to the ith position in the array 
                 NavPoints[i] = temp_nav;
             }
+
+            //returns the array, which is assigned to an array inside the game controller 
+            //(which the rest of the game then accesses)
             return NavPoints;
         }
     }
     
-
    //reads through a data file to create the game map
     public Map GetMapData()
     {
@@ -99,15 +117,17 @@ public class Grid_Setup : MonoBehaviour {
          * 4th - EOF: tile type (number that is converted to enum) - goes left to right, top to bottom
          * (hence last line on file represent the bottom right tile
         */
-        
+
         using (StreamReader sr = new StreamReader(file_path, true))
         {
             num_cells = Convert.ToInt32(sr.ReadLine());
-
             width = Convert.ToInt32(sr.ReadLine());
-
             height = Convert.ToInt32(sr.ReadLine());
 
+            //gets the required x and y translation, for the given length and height
+            x_start = -(width / 2);
+            y_start = -(height / 2);
+            
             //creates game map that will be returned
             Map method_map = new Map(num_cells, width, height);
 
@@ -116,7 +136,7 @@ public class Grid_Setup : MonoBehaviour {
             {
                 for (float x = 0; x < width; x += size)
                 {
-                    var point = GetNearestPointOnGrid(new Vector3(x, y, 0.2f));
+                    var point = GetNearestPointOnGrid(new Vector3(x + x_start, y + y_start, 0.2f));
                     string line;
                     if ((line = sr.ReadLine()) != null)
                     {
@@ -165,7 +185,6 @@ public class Grid_Setup : MonoBehaviour {
         foreach (MapTile tile in map.Map_Tiles)
         {
             GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            
             cube.transform.position = tile.Position;
             cube.GetComponent<Renderer>().sortingOrder = 1;
             cube.transform.localScale = new Vector3(1f, 1f, 0.1f);

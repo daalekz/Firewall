@@ -16,6 +16,7 @@ public class WaveController : MonoBehaviour
 	private float timer  = 0.0f;
 	[SerializeField]
 	private float SpawnDelay = 1.0f;
+    private List<GameObject> spawned_objects;
 
 	void Awake ()
 	{
@@ -27,6 +28,8 @@ public class WaveController : MonoBehaviour
 	{
 		spawner = Spawner.instance;
 		wave = new Queue<GameObject>();
+        //keeps track of active game objects
+        spawned_objects = new List<GameObject>();
 	}
 
 	void Update ()
@@ -38,7 +41,9 @@ public class WaveController : MonoBehaviour
 
         // We're clear to spawn the next unit
 		timer = 0.0f;
-		spawner.Spawn(wave.Dequeue());
+        
+        //active game objects are added to list (so that tower can target them)
+        spawned_objects.Add(spawner.Spawn(wave.Dequeue()));
 
 		// Finally, we need to check that we have any units left to spawn, if not then stop the wave
 		if (wave.Count == 0)
@@ -99,4 +104,17 @@ public class WaveController : MonoBehaviour
         // Start generating the new wave
 		StartCoroutine(GenerateWave(limit));
 	}
+
+    public List<GameObject> SpawnedObjects
+    {
+        get
+        {
+            return spawned_objects;
+        }
+
+        set
+        {
+            spawned_objects = value;
+        }
+    }
 }

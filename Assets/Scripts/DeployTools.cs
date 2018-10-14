@@ -18,7 +18,6 @@ public class DeployTools
         return null;
     }
 
-
     public static void Manage_Tile_Type(Vector3 Search_Position, TileType change_type, List<MapTile> Search_List)
     {
         foreach (MapTile tile in Search_List)
@@ -40,7 +39,6 @@ public class DeployTools
                 return tower;
             }
         }
-
         return null;
     }
 
@@ -53,7 +51,6 @@ public class DeployTools
                 return tower;
             }
         }
-
         return null;
     }
 }

@@ -17,6 +17,19 @@ public class GameController : MonoBehaviour
 		instance = this;
 	}
 
+    public WaveController WaveController
+    {
+        get
+        {
+            return wc;
+        }
+
+        set
+        {
+            wc = value;
+        }
+    }
+
 	void Start ()
 	{
 		wc = WaveController.instance;

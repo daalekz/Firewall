@@ -12,8 +12,9 @@ public class Spawner : MonoBehaviour
 		instance = this;
 	}
 
-	public void Spawn(GameObject obj)
+    //returns game object, so that active game objects can be accessed
+	public GameObject Spawn(GameObject obj)
 	{
-		Instantiate(obj, transform.position, transform.rotation);
+		return Instantiate(obj, transform.position, transform.rotation);
 	}
 }
