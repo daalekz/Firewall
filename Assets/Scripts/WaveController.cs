@@ -53,6 +53,19 @@ public class WaveController : MonoBehaviour
 		}
 	}
 
+    public float Delay
+    {
+        get
+        {
+            return SpawnDelay;
+        }
+
+        set
+        {
+            SpawnDelay = value;
+        }
+    }
+
 	private IEnumerator GenerateWave (int limit)
 	{
 		// Enemy points are the allowance for enemy units each wave. Each enemy unit

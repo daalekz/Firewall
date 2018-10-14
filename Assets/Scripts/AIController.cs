@@ -70,4 +70,12 @@ public class AIController : MonoBehaviour
 		direction = gc.navPoints[nodeIndex + 1].transform.position - transform.position;
 		direction = direction / direction.magnitude;
 	}
+
+    public int NavPointNum
+    {
+        get
+        {
+            return nodeIndex;
+        }
+    }
 }

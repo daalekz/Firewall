@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour
     public static GameController instance { get; private set; }
 	private WaveController wc;
 
-    public GameObject[] navPoints; // Array of empty game objects used as nodes to navigate between
+    private GameObject[] navPointsArray = new GameObject[0]; // Array of empty game objects used as nodes to navigate between || FIX
 	public Text WaveDisplay;
 
 	void Awake ()
@@ -39,4 +39,17 @@ public class GameController : MonoBehaviour
 	{
 		WaveDisplay.text = "Wave: " + wc.WaveCount.ToString();
 	}
+
+    public GameObject[] navPoints
+    {
+        get
+        {
+            return navPointsArray;
+        }
+
+        set
+        {
+            navPointsArray = value;
+        }
+    }
 }

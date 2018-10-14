@@ -153,7 +153,6 @@ public class Deploy : MonoBehaviour
                 shape_color.a = 0.5f;
                 break;
         }
-        
     }
 
     private void PlaceCubeNear(Vector3 clickPoint)

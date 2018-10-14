@@ -6,7 +6,7 @@ using UnityEngine;
  * Summary: 
  * Class is used for the different elements that will be placed on the screen and fire at enemies
 */
-public class Tower
+public class Tower : MonoBehaviour
 {
     private Vector3 _position;
     private GameObject rendered_tower;
@@ -16,6 +16,12 @@ public class Tower
     private float radius;
     GameObject aim_line;
     GameController gc;
+    private float shoot_wait_remaining;
+    private float display_shot = 0.2f;
+    private float display_shot_remaining = 0.2f;
+
+
+    private bool end_enemy;
 
     //two different constructors to allow for greater user flexibility
     public Tower(int x, int y)
@@ -40,6 +46,25 @@ public class Tower
         shape_color.a = 0;
         aim_line = new GameObject();
         aim_line.AddComponent<LineRenderer>();
+
+        radius = 3;
+        fire_rate = 0.5f;
+        shoot_wait_remaining = 0;
+    }
+
+    //add sniper option!!!
+
+
+    public Tower(Vector3 position, float range)
+    {
+        rendered_tower = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        _position = position;
+        var shape_color = rendered_tower.GetComponent<Renderer>().material.color;
+        shape_color.a = 0;
+        aim_line = new GameObject();
+        aim_line.AddComponent<LineRenderer>();
+        radius = range;
+
     }
 
     //tell the program how the tower should be drawn
@@ -120,34 +145,112 @@ public class Tower
     public void Shoot(List<GameObject> enemy_queue)
     {
         //local fields store the closest game object and the distance of the object from the turret
-        GameObject closest_unit = null;
-        float closet_distance = 0;
-       
-        //goes through all of the enemy currently present on the board
-        foreach(GameObject enemy in enemy_queue)
+        GameObject select_unit = null;
+        float closest_distance = 0;
+        end_enemy = false;
+        GameObject[] navPoints = new GameObject[0];
+
+        shoot_wait_remaining -= Time.deltaTime;
+        display_shot_remaining -= Time.deltaTime;
+
+        if (display_shot_remaining <= 0)
         {
-            //if the distance hasn't been set, then closest enemy is set to the currently selected enemy in the list
-            if (closet_distance == 0)
-            {
-                closet_distance = Vector3.Distance(Position, enemy.transform.position);
-                closest_unit = enemy;
-            }
-            else 
-            {
-                //if the previously closest enemy HAS been set, then it is checked if there is a closer enemy
-                if (Vector3.Distance(Position, enemy.transform.position) < closet_distance)
-                {
-                    closest_unit = enemy;
-                    closet_distance = Vector3.Distance(Position, enemy.transform.position);
-                }
-            }
+            aim_line.GetComponent<LineRenderer>().SetPosition(1, Position);
+            display_shot_remaining = display_shot;
         }
 
-        //if the closest_unit has been set to an actually gameobject instance
-        //then a line is drawn between the turret and the gameobject
-        if (closest_unit != null)
-        {
-            DrawLine(Position, closest_unit.transform.position, Color.green);
+
+        if (shoot_wait_remaining <= 0f) {
+            if (!end_enemy)
+            {
+                //goes through all of the enemy currently present on the board
+                foreach (GameObject enemy in enemy_queue)
+                {
+                    //if the distance hasn't been set, then closest enemy is set to the currently selected enemy in the list
+                    if (closest_distance == 0)
+                    {
+                        closest_distance = Vector3.Distance(Position, enemy.transform.position);
+                        select_unit = enemy;
+                    }
+                    else
+                    {
+                        //if the previously closest enemy HAS been set, then it is checked if there is a closer enemy
+                        if (Vector3.Distance(Position, enemy.transform.position) < closest_distance)
+                        {
+                            select_unit = enemy;
+                            closest_distance = Vector3.Distance(Position, enemy.transform.position);
+                        }
+                    }
+                }
+                //if the select_unit has been set to an actually gameobject instance
+                //then a line is drawn between the turret and the gameobject
+
+                if (select_unit != null)
+                {
+                    if (closest_distance <= radius)
+                    {
+                        DrawLine(Position, select_unit.transform.position, Color.green);
+                        shoot_wait_remaining = 1 / fire_rate;
+
+                        Destroy(select_unit);
+                        enemy_queue.Remove(select_unit);
+                        closest_distance = 0;
+
+                    }
+                    else
+                    {
+                        select_unit = null;
+                        closest_distance = 0;
+                        aim_line.GetComponent<LineRenderer>().SetPosition(1, Position);
+                    }
+                }
+
+            }
+            else
+            {
+                //get nodeindex
+                gc = GameController.instance;
+
+                navPoints = gc.navPoints;
+                int HighNavPoint = 0;
+
+                //goes through all of the enemy currently present on the board
+                foreach (GameObject enemy in enemy_queue)
+                {
+                    if (enemy_queue[0] == enemy)
+                    {
+                        select_unit = enemy;
+                        HighNavPoint = enemy.GetComponent<AIController>().NavPointNum;
+                        closest_distance = Vector3.Distance(enemy.transform.position, navPoints[HighNavPoint + 1].transform.position);
+
+                    }
+                    else
+                    {
+                        if (enemy.GetComponent<AIController>().NavPointNum > HighNavPoint)
+                        {
+                            select_unit = enemy;
+                            HighNavPoint = enemy.GetComponent<AIController>().NavPointNum;
+                            closest_distance = Vector3.Distance(enemy.transform.position, navPoints[HighNavPoint + 1].transform.position);
+                        }
+                        else if (enemy.GetComponent<AIController>().NavPointNum == HighNavPoint && Vector3.Distance(enemy.transform.position, navPoints[HighNavPoint + 1].transform.position) < closest_distance)
+                        {
+                            select_unit = enemy;
+                            closest_distance = Vector3.Distance(enemy.transform.position, navPoints[HighNavPoint + 1].transform.position);
+                        }
+                    }
+
+                }
+
+                if (select_unit != null)
+                {
+                    Destroy(select_unit);
+                    enemy_queue.Remove(select_unit);
+                    closest_distance = 0;
+
+                    DrawLine(Position, select_unit.transform.position, Color.green);
+                    shoot_wait_remaining = 1 / fire_rate;
+                }
+            }
         }
     }
 }
