@@ -10,13 +10,31 @@ public class Annihilator : Tower {
         Range = 0;
         FireRate = 0.11f;
 
+        rendered_tower = TowerTools.Instantiate(deploy_instance.tower_annihilator, Position, Quaternion.identity);
+        Color = rendered_tower.GetComponent<SpriteRenderer>().color;
+
+        rendered_tower.transform.position = Position;
+        //rendered_tower.GetComponent<Renderer>().sortingOrder = 2;
+        rendered_tower.transform.position = new Vector3
+            (
+                rendered_tower.transform.position.x,
+                rendered_tower.transform.position.y,
+                -2
+            );
+
+
+        AimLine = new GameObject();
+        AimLine.AddComponent<LineRenderer>();
+        AimLine.name = "Tower Aim Line";
+        this.TowerObj.name = "Annihilator Tower";
+
+        //aim_line.transform.parent = this.TowerObj.transform;
     }
 
     public override void Render()
     {
-        TowerObj.transform.position = Position;
-        TowerObj.GetComponent<Renderer>().sortingOrder = 2;
-
+        TowerObj.transform.position = new Vector3(Position.x, Position.y, -2);
+        
 
         if (Selected)
         {

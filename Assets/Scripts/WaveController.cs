@@ -92,6 +92,8 @@ public class WaveController : MonoBehaviour
 	{
 		if (WaveStarted) return; // Just in case the wave has already started, though this shouldn't happen normally
 
+
+
 		// Reset timer
 		timer = 0.0f;
 

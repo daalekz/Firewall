@@ -372,6 +372,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 434110599}
   cam: {fileID: 1516174764}
+  tower_template: {fileID: 1303365040213968, guid: 726cecf2b3ff4434785510cdb53955e6,
+    type: 2}
+  tower_defender: {fileID: 1303365040213968, guid: 7e0be3d9b4d6a1e4dab32e3b6c878123,
+    type: 2}
+  tower_extractor: {fileID: 1303365040213968, guid: 1892f6ef849c267409952f02161bf484,
+    type: 2}
+  tower_isolator: {fileID: 1303365040213968, guid: 9382bc603f3de614ba8371834803b821,
+    type: 2}
+  tower_scanner: {fileID: 1303365040213968, guid: 5e0fceef44c6d07488f16636df01e7a6,
+    type: 2}
+  tower_annihilator: {fileID: 1303365040213968, guid: 9ec4ef8af12a5b04bae18e1421b94827,
+    type: 2}
 --- !u!4 &1026316179
 Transform:
   m_ObjectHideFlags: 0

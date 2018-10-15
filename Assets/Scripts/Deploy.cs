@@ -8,6 +8,8 @@ using System;
 */
 public class Deploy : MonoBehaviour
 {
+    public static Deploy instance { get; private set; }
+
     //needs to get the data from camera and grid (hence they are passed into script via the object)
     public Grid_Setup grid;
     public Camera cam;
@@ -15,9 +17,19 @@ public class Deploy : MonoBehaviour
     private GameObject hover_sphere;
     private TowerType build_type;
 
+    public GameObject tower_template;
+    public GameObject tower_defender;
+    public GameObject tower_extractor;
+    public GameObject tower_isolator;
+    public GameObject tower_scanner;
+    public GameObject tower_annihilator;
+
     //initalized necessary variables, objects and other data
     private void Awake()
     {
+        if (instance != null) throw new System.Exception();
+        instance = this;
+
         grid = FindObjectOfType<Grid_Setup>();
 
         hover_sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -25,7 +37,7 @@ public class Deploy : MonoBehaviour
         hover_sphere.GetComponent<Renderer>().sortingOrder = 3;
 
         selected_tower = null;
-        build_type = TowerType.Isolator;
+        build_type = TowerType.Annihilator;
     }
 
     private void Update()

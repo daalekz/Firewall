@@ -7,5 +7,5 @@ public class TowerTools : MonoBehaviour {
     {
         Destroy(obj);
     }
-
 }
+

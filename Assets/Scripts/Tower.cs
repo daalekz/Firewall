@@ -9,8 +9,10 @@ using System;
 */
 public class Tower
 {
+    private Deploy deploy;
+
     private Vector3 _position;
-    private GameObject rendered_tower;
+    public GameObject rendered_tower;
     private bool _selected;
     private float fire_rate;
     private float radius;
@@ -26,38 +28,33 @@ public class Tower
     public float display_shot = 0.2f;
     private float display_shot_remaining = 0.2f;
     private TowerType _tower_type;
+    private Sprite graphical_tower;
     
     public Tower(Vector3 position, TowerType type)
     {
+        deploy = Deploy.instance;
         _tower_type = type;
-        rendered_tower = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         _position = position;
-        shape_color = rendered_tower.GetComponent<Renderer>().material.color;
-        shape_color.a = 0;
-        this.TowerObj.name = "Tower";
-        
-        aim_line = new GameObject();
-        aim_line.AddComponent<LineRenderer>();
-        aim_line.name = "Tower Aim Line";
-        aim_line.transform.parent = this.TowerObj.transform;
         shoot_wait_remaining = 0;
+
     }
-  
+
 
     //tell the program how the tower should be drawn
     public virtual void Render()
     {
-        rendered_tower.transform.position = _position;
-        rendered_tower.GetComponent<Renderer>().sortingOrder = 2;
+
 
 
         if (_selected)
         {
-            rendered_tower.GetComponent<Renderer>().material.color = Color.yellow;
+            //rendered_tower.GetComponent<Renderer>().material.color = Color.yellow;
+            rendered_tower.GetComponent<SpriteRenderer>().color = Color.yellow;
         }
         else
         {
-            rendered_tower.GetComponent<Renderer>().material.color = Color.cyan;
+            //rendered_tower.GetComponent<Renderer>().material.color = Color.cyan;
+            rendered_tower.GetComponent<SpriteRenderer>().color = Color.cyan;
         }
     }
 
@@ -86,6 +83,19 @@ public class Tower
         set
         {
             rendered_tower = value;
+        }
+    }
+
+    public Deploy deploy_instance
+    {
+        get
+        {
+            return deploy;
+        }
+
+        set
+        {
+            deploy = value;
         }
     }
 

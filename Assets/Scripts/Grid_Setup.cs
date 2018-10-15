@@ -206,7 +206,10 @@ public class Grid_Setup : MonoBehaviour {
             {
                 case (TileType.empty):
                    cube.GetComponent<Renderer>().material.color = Color.white;
+                    
+
                     break;
+
 
                 case (TileType.path):
                     cube.GetComponent<Renderer>().material.color = Color.red;
