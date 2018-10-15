@@ -7,6 +7,7 @@ public class WaveController : MonoBehaviour
 {
 	public static WaveController instance { get; private set; }
 	private Spawner spawner;
+	private UIController uic;
 
 	public GameObject[] Units;
 	private Queue<GameObject> wave;
@@ -27,6 +28,7 @@ public class WaveController : MonoBehaviour
 	void Start ()
 	{
 		spawner = Spawner.instance;
+		uic = UIController.instance;
 		wave = new Queue<GameObject>();
         //keeps track of active game objects
         spawned_objects = new List<GameObject>();
@@ -50,6 +52,8 @@ public class WaveController : MonoBehaviour
 		{
 			WaveStarted = false;
 			WaveCount++;
+			// Reveal the start wave button
+		    uic.ToggleWaveButtonView();
 		}
 	}
 
@@ -73,6 +77,9 @@ public class WaveController : MonoBehaviour
 		}
 
 		WaveStarted = true;
+		// Hide the start wave button
+		Debug.Log("Hiding button");
+		uic.ToggleWaveButtonView();
 	}
 
 	public void StartWave ()

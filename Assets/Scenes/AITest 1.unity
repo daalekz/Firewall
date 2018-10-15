@@ -294,6 +294,7 @@ GameObject:
   - component: {fileID: 688192187}
   - component: {fileID: 688192186}
   - component: {fileID: 688192188}
+  - component: {fileID: 688192189}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -343,6 +344,18 @@ MonoBehaviour:
   - {fileID: 1473108543255732, guid: ec8d2dba35ba3b941a4edb0bc050cd22, type: 2}
   WaveCount: 1
   SpawnDelay: 1
+--- !u!114 &688192189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 688192185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e89af4f4358d374d864e0303dcdb27e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WaveButton: {fileID: 1730828688}
 --- !u!1 &1026316177
 GameObject:
   m_ObjectHideFlags: 0
@@ -999,6 +1012,11 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 20e5119c173824f4db1e7ba83a6410af, type: 2}
   m_IsPrefabAsset: 0
+--- !u!1 &1730828688 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1841087722740962, guid: 20e5119c173824f4db1e7ba83a6410af,
+    type: 2}
+  m_PrefabInternal: {fileID: 1730828687}
 --- !u!1 &1842181284
 GameObject:
   m_ObjectHideFlags: 0
