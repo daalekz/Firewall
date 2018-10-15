@@ -217,6 +217,11 @@ public class Grid_Setup : MonoBehaviour {
         {
             return game_map.Map_Tiles;
         }
+
+        set
+        {
+            game_map.Map_Tiles = value;
+        }
     }
 
     public int Width

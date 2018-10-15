@@ -61,6 +61,11 @@ public class Map
         {
             return map_towers;
         }
+
+        set
+        {
+            map_towers = value;
+        }
     }
 
     public int Width

@@ -11,8 +11,9 @@ public class Deploy : MonoBehaviour
     //needs to get the data from camera and grid (hence they are passed into script via the object)
     public Grid_Setup grid;
     public Camera cam;
-    private static Tower selected_tower;
+    public static Tower selected_tower;
     private GameObject hover_sphere;
+    private TowerType build_type;
 
     //initalized necessary variables, objects and other data
     private void Awake()
@@ -22,8 +23,10 @@ public class Deploy : MonoBehaviour
         hover_sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         hover_sphere.transform.localScale = new Vector3(0, 0, 0);
         hover_sphere.GetComponent<Renderer>().sortingOrder = 3;
-    }
 
+        selected_tower = null;
+        build_type = TowerType.Defender;
+    }
 
     private void Update()
     {
@@ -35,7 +38,7 @@ public class Deploy : MonoBehaviour
         {
             if (Physics.Raycast(ray, out hitInfo))
             {
-                PlaceCubeNear(hitInfo.point);
+                CreateTower(hitInfo.point);
             }
         }
         
@@ -54,8 +57,10 @@ public class Deploy : MonoBehaviour
                     if (selected_tower == null)
                     {
                         //assigns selected_tower and modifies object
-                        DeployTools.SelectTower(grid.GameMap.Map_Towers, finalPosition).Selected = true;
                         selected_tower = DeployTools.SelectTower(grid.GameMap.Map_Towers, finalPosition);
+
+                        DeployTools.SelectTower(grid.GameMap.Map_Towers, finalPosition).Selected = true;
+
                     }
                     else
                     {
@@ -155,7 +160,7 @@ public class Deploy : MonoBehaviour
         }
     }
 
-    private void PlaceCubeNear(Vector3 clickPoint)
+    private void CreateTower(Vector3 clickPoint)
     {
         var finalPosition = grid.GetNearestPointOnGrid(clickPoint);
         //GameObject.CreatePrimitive(PrimitiveType.Cube).transform.position = finalPosition;
@@ -170,7 +175,28 @@ public class Deploy : MonoBehaviour
 
             if (grid.GameMap.Map_Towers != null)
             {
-                grid.GameMap.Map_Towers.Add(new Tower(finalPosition, TowerType.Annihilator));
+                switch (build_type)
+                {
+                    case TowerType.Annihilator:
+                        grid.GameMap.Map_Towers.Add(new Annihilator(finalPosition));
+                        break;
+
+                    case TowerType.Defender:
+                        grid.GameMap.Map_Towers.Add(new Defender(finalPosition));
+                        break;
+
+                    case TowerType.Extractor:
+                        //grid.GameMap.Map_Towers.Add();
+                        break;
+
+                    case TowerType.Isolator:
+                        grid.GameMap.Map_Towers.Add(new Isolator(finalPosition));
+                        break;
+
+                    case TowerType.Scanner:
+                        grid.GameMap.Map_Towers.Add(new Scanner(finalPosition));
+                        break;
+                }
             }
         }
         else
