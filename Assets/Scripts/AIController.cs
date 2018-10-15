@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+
 
 public class AIController : MonoBehaviour
 {
@@ -17,10 +19,6 @@ public class AIController : MonoBehaviour
 	{
 		gc = GameController.instance;
 
-		// Set the initial direction the AI will move in
-		direction = gc.navPoints[1].transform.position - gc.navPoints[0].transform.position;
-		direction = direction / direction.magnitude;
-
 		switch (Type)
 		{
 			case EnemyType.DDoS:
@@ -35,10 +33,24 @@ public class AIController : MonoBehaviour
 			    data = new Spyware();
 				break;
 		}
-	}
-	
-	// Update is called once per frame
-	void Update ()
+
+        System.Random rnd = new System.Random();
+        data.PathNum = rnd.Next(0, gc.navPoints.Count);
+
+
+        direction = gc.navPoints[data.PathNum][1].transform.position - gc.navPoints[data.PathNum][0].transform.position;
+
+        //set that path number here
+
+
+        // Set the initial direction the AI will move in
+        direction = gc.navPoints[data.PathNum][1].transform.position - gc.navPoints[data.PathNum][0].transform.position;
+        direction = direction / direction.magnitude;
+        
+    }
+
+    // Update is called once per frame
+    void Update ()
 	{
 		// Move the AI towards the current node
 		transform.position += (direction * data.Speed) * Time.deltaTime;
@@ -67,7 +79,7 @@ public class AIController : MonoBehaviour
 	void ChangeDirection ()
 	{
 		nodeIndex++; // Change the node we will now move towards
-		direction = gc.navPoints[nodeIndex + 1].transform.position - transform.position;
+		direction = gc.navPoints[data.PathNum][nodeIndex + 1].transform.position - transform.position;
 		direction = direction / direction.magnitude;
 	}
 
@@ -76,6 +88,19 @@ public class AIController : MonoBehaviour
         get
         {
             return nodeIndex;
+        }
+    }
+
+    public int AIPathNum
+    {
+        get
+        {
+            return data.PathNum;
+        }
+
+        set
+        {
+            data.PathNum = value;
         }
     }
 }

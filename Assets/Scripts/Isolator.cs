@@ -20,7 +20,8 @@ public class Isolator : Tower
         GameObject select_unit = null;
         float closest_distance = 0;
         TargetEnd = true;
-        GameObject[] navPoints = new GameObject[0];
+        List<GameObject[]> navPoints = null;
+        int NavPathNum;
 
         Shoot_Wait_Remaining -= Time.deltaTime;
         Display_Shot_Remaining -= Time.deltaTime;
@@ -40,6 +41,7 @@ public class Isolator : Tower
 
             navPoints = gc.navPoints;
             int HighNavPoint = 0;
+        
 
             //goes through all of the enemy currently present on the board
             foreach (GameObject enemy in enemy_queue)
@@ -47,22 +49,27 @@ public class Isolator : Tower
                 if (enemy_queue[0] == enemy)
                 {
                     select_unit = enemy;
+                    NavPathNum = enemy.GetComponent<AIController>().AIPathNum;
                     HighNavPoint = enemy.GetComponent<AIController>().NavPointNum;
-                    closest_distance = Vector3.Distance(enemy.transform.position, navPoints[HighNavPoint + 1].transform.position);
+                    closest_distance = Vector3.Distance(enemy.transform.position, navPoints[NavPathNum][HighNavPoint + 1].transform.position);
 
                 }
                 else
                 {
+                    NavPathNum = enemy.GetComponent<AIController>().AIPathNum;
+
                     if (enemy.GetComponent<AIController>().NavPointNum > HighNavPoint)
                     {
                         select_unit = enemy;
+                        NavPathNum = enemy.GetComponent<AIController>().AIPathNum;
+
                         HighNavPoint = enemy.GetComponent<AIController>().NavPointNum;
-                        closest_distance = Vector3.Distance(enemy.transform.position, navPoints[HighNavPoint + 1].transform.position);
+                        closest_distance = Vector3.Distance(enemy.transform.position, navPoints[NavPathNum][HighNavPoint + 1].transform.position);
                     }
-                    else if (enemy.GetComponent<AIController>().NavPointNum == HighNavPoint && Vector3.Distance(enemy.transform.position, navPoints[HighNavPoint + 1].transform.position) < closest_distance)
+                    else if (enemy.GetComponent<AIController>().NavPointNum == HighNavPoint && Vector3.Distance(enemy.transform.position, navPoints[NavPathNum][HighNavPoint + 1].transform.position) < closest_distance)
                     {
                         select_unit = enemy;
-                        closest_distance = Vector3.Distance(enemy.transform.position, navPoints[HighNavPoint + 1].transform.position);
+                        closest_distance = Vector3.Distance(enemy.transform.position, navPoints[NavPathNum][HighNavPoint + 1].transform.position);
                     }
                 }
             }

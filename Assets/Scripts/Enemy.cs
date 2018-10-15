@@ -9,6 +9,7 @@ public abstract class Enemy
 	public int Damage { get; private set; }
 	public int Value { get; private set; }
 	public readonly EnemyType Type;
+    private int _path_num;
 
 	public Enemy (int _health, float _speed, int _damage, int _value, EnemyType _type)
 	{
@@ -17,12 +18,26 @@ public abstract class Enemy
 		Damage = _damage;
 		Value = _value;
 		Type = _type;
+        _path_num = 0;
 	}
 
 	public void ApplyDamage (int damage)
 	{
 		Health -= damage;
 	}
+
+    public int PathNum
+    {
+        get
+        {
+            return _path_num;
+        }
+
+        set
+        {
+            _path_num = value;
+        }
+    }
 
    
 }

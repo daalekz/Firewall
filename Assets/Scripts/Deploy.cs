@@ -25,7 +25,7 @@ public class Deploy : MonoBehaviour
         hover_sphere.GetComponent<Renderer>().sortingOrder = 3;
 
         selected_tower = null;
-        build_type = TowerType.Defender;
+        build_type = TowerType.Isolator;
     }
 
     private void Update()
@@ -127,7 +127,6 @@ public class Deploy : MonoBehaviour
             return;
         }
         
-
         switch (temp_tile.Type)
         {
             //check that the tile is a of tiletype empty
