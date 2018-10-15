@@ -16,8 +16,14 @@ public class Deploy : MonoBehaviour
     private GameObject hover_sphere;
     private TowerType build_type;
 
-    //initalized necessary variables, objects and other data
-    private void Awake()
+	public void SetBuildType(int type)
+	{
+		build_type = (TowerType)type;
+	}
+
+
+	//initalized necessary variables, objects and other data
+	private void Awake()
     {
         grid = FindObjectOfType<Grid_Setup>();
 
@@ -108,7 +114,6 @@ public class Deploy : MonoBehaviour
             hover_sphere.transform.localScale = new Vector3(0, 0, 0);
         }
     }
-
 
     /*
      * Summary:
