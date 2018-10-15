@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -34,7 +35,7 @@ public class Deploy : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 
         //draws tower
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             if (Physics.Raycast(ray, out hitInfo))
             {
