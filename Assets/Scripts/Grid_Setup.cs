@@ -203,13 +203,13 @@ public class Grid_Setup : MonoBehaviour {
             switch (tile.Type)
             {
                 case (TileType.empty):
-                    //cube = Instantiate(map_prefab, tile.Position, Quaternion.identity);
+                    cube = Instantiate(map_prefab, tile.Position, Quaternion.identity);
 
-                    cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    //cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     cube.transform.position = tile.Position;
-                    cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
-                    //cube.transform.position = new Vector3(cube.transform.position.x, cube.transform.position.y, 1);
-                    cube.GetComponent<Renderer>().material.color = Color.grey;
+                    //cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
+                    cube.transform.position = new Vector3(cube.transform.position.x, cube.transform.position.y, 1);
+                    //cube.GetComponent<Renderer>().material.color = Color.grey;
                     cube.transform.parent = placement_tiles.transform;
                     cube.name = "PlacementTile";
                     break;

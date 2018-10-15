@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4229634772303114}
   - component: {fileID: 212189430844033808}
   m_Layer: 0
-  m_Name: tower_isolator_turret
+  m_Name: tower_isolator 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
