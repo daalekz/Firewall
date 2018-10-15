@@ -302,6 +302,8 @@ public class Tower
                 {
                     closest_distance = Vector3.Distance(Position, enemy.transform.position);
                     select_unit = enemy;
+                    AimLine.GetComponent<LineRenderer>().SetPosition(1, Position);
+                    AimLine.GetComponent<LineRenderer>().SetPosition(0, Position);
                 }
                 else
                 {
@@ -327,11 +329,15 @@ public class Tower
                     temp = new Vector3(select_unit.transform.position.x, select_unit.transform.position.y, Position.z);
 
                     tower_rotation = temp - Position;
+                    
+                    select_unit.GetComponent<AIController>().data.ApplyDamage(Convert.ToInt32(Damage));
+                    if (select_unit.GetComponent<AIController>().data.Health <= 0)
+                    {
+                        TowerTools.DestroyGameObj(select_unit);
 
-
-                    TowerTools.DestroyGameObj(select_unit);
-                
-                    enemy_queue.Remove(select_unit);
+                        enemy_queue.Remove(select_unit);
+                    }
+                    
                     closest_distance = 0;
                 }
                 else

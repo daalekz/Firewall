@@ -29,11 +29,31 @@ public class GameController : MonoBehaviour
 	void Update ()
 	{
 		WaveDisplay.text = "Wave: " + wc.WaveCount.ToString();
+        
+
+
+        foreach (GameObject enemy in wc.SpawnedObjects)
+        {
+            float current_point = enemy.transform.position.x;
+            int selected_path = enemy.GetComponent<AIController>().data.PathNum;
+
+            if (current_point >= navPoints[selected_path][navPoints[selected_path].Length - 1].transform.position.x)
+            {
+                wc.SpawnedObjects.Remove(enemy);
+                TowerTools.Destroy(enemy);
+                PlayerBoi.ApplyDamage(50);
+                break;
+            }
+
+        }
+
 
         if (PlayerBoi != null)
         {
             HealthDisplay.text = "Health: " + PlayerBoi.Health.ToString();
         }
+
+        Debug.Log(PlayerBoi.Health);
 	}
 
 	void OnTriggerExit2D(Collider2D col)

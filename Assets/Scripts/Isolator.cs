@@ -76,6 +76,8 @@ public class Isolator : Tower
             {
                 if (enemy_queue[0] == enemy)
                 {
+                    AimLine.GetComponent<LineRenderer>().SetPosition(1, Position);
+                    AimLine.GetComponent<LineRenderer>().SetPosition(0, Position);
                     select_unit = enemy;
                     NavPathNum = enemy.GetComponent<AIController>().AIPathNum;
                     HighNavPoint = enemy.GetComponent<AIController>().NavPointNum;

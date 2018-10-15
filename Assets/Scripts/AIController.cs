@@ -52,10 +52,13 @@ public class AIController : MonoBehaviour
     // Update is called once per frame
     void Update ()
 	{
-		// Move the AI towards the current node
-		transform.position += (direction * data.Speed) * Time.deltaTime;
-        //specifies z (so that it is rendered ontop)
-        transform.position = new Vector3(transform.position.x, transform.position.y, -1);
+        if (data != null)
+        {
+            // Move the AI towards the current node
+            transform.position += (direction * data.Speed) * Time.deltaTime;
+            //specifies z (so that it is rendered ontop)
+            transform.position = new Vector3(transform.position.x, transform.position.y, -1);
+        }
 	}
 
 	void OnTriggerEnter2D (Collider2D col)
