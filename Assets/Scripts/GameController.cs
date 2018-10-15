@@ -12,12 +12,15 @@ public class GameController : MonoBehaviour
 	public Player PlayerBoi { get; private set; }
 
     private List<GameObject[]> navPointsArray = new List<GameObject[]>(); // Array of empty game objects used as nodes to navigate between || FIX
+    private GameObject GameOverText;
 
 
 	void Start ()
 	{
 		wc = WaveController.instance;
 		PlayerBoi = new Player(100);
+        GameOverText = GameObject.FindWithTag("GameOver");
+        GameOverText.SetActive(false);
 	}
 
   void Awake()
@@ -45,6 +48,12 @@ public class GameController : MonoBehaviour
                 break;
             }
 
+
+        }
+
+        if (PlayerBoi.Health <= 0)
+        {
+            GameOverText.SetActive(true);
         }
 
 
