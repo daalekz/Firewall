@@ -2,13 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class MainMenuController : MonoBehaviour {
-
+public class MainMenuController : MonoBehaviour
+{
+	public Slider LoadingBar;
+	
 	public void StartGame()
 	{
-		//ADD GAME SCENE HERE
-		//SceneManager.LoadScene("game schene name here");
-		Debug.Log("Play button clicked");
+		LoadingBar.gameObject.SetActive(true);
+		StartCoroutine(StartLoadLevel());
+	}
+
+	private IEnumerator StartLoadLevel()
+	{
+		AsyncOperation operation = SceneManager.LoadSceneAsync("AITest 1");
+		while (!operation.isDone)
+		{
+			float progress = Mathf.Clamp01(operation.progress / 0.9f);
+			LoadingBar.value = progress;
+
+			yield return null;
+		}
 	}
 }
