@@ -14,6 +14,7 @@ public class Grid_Setup : MonoBehaviour {
     private float x_start, y_start;
     GameController gc;
     private Map game_map;
+    public GameObject map_prefab;
 
     // Use this for initialization
     void Start() {
@@ -101,6 +102,7 @@ public class Grid_Setup : MonoBehaviour {
 
                     //assigns the navpoints to NavPoints parents element
                     temp_nav.transform.parent = NavPoint.transform;
+                    NavPoint.name = "NavPoints";
                     //assigns the nav element to the ith position in the array 
                     NavPoints[i] = temp_nav;
                 }
@@ -189,36 +191,43 @@ public class Grid_Setup : MonoBehaviour {
     //draws the game squares 
     void OnDraw(Map map)
     {
-        
+        GameObject cube = null;
         GameObject parent_path = GameObject.Find("Path");
-
+        GameObject placement_tiles = GameObject.Find("PlacementTiles");
         parent_path.transform.localScale = new Vector3(map.Width, map.Height, 1);
 
         foreach (MapTile tile in map.Map_Tiles)
         {
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.transform.position = tile.Position;
-            cube.GetComponent<Renderer>().sortingOrder = 1;
-            cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
 
             //draws differently colored squares depending on the enum value
             switch (tile.Type)
             {
                 case (TileType.empty):
-                   cube.GetComponent<Renderer>().material.color = Color.white;
-                    
+                    //cube = Instantiate(map_prefab, tile.Position, Quaternion.identity);
 
+                    cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    cube.transform.position = tile.Position;
+                    cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
+                    //cube.transform.position = new Vector3(cube.transform.position.x, cube.transform.position.y, 1);
+                    cube.GetComponent<Renderer>().material.color = Color.grey;
+                    cube.transform.parent = placement_tiles.transform;
+                    cube.name = "PlacementTile";
                     break;
 
-
                 case (TileType.path):
-                    cube.GetComponent<Renderer>().material.color = Color.red;
+                    cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    cube.transform.position = tile.Position;
+                    cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
+                    cube.GetComponent<Renderer>().material.color = Color.white;
                     cube.transform.parent = parent_path.transform;
                     cube.name = "MapTile";
-
                     break;
 
                 case (TileType.terrain):
+                    cube = Instantiate(map_prefab, tile.Position, Quaternion.identity);
+
+                    cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
+
                     cube.GetComponent<Renderer>().material.color = Color.green;
                     cube.name = "TerrainTile";
                     break;

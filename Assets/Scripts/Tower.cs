@@ -13,12 +13,14 @@ public class Tower
 
     private Vector3 _position;
     public GameObject rendered_tower;
+    public GameObject tower_gun;
     private bool _selected;
     private float fire_rate;
     private float radius;
     private float damage;
     private bool target_end = false;
     private bool vert = false;
+    private Vector3 tower_rotation;
 
     Color shape_color;
 
@@ -36,7 +38,7 @@ public class Tower
         _tower_type = type;
         _position = position;
         shoot_wait_remaining = 0;
-
+        gc = GameController.instance;
     }
 
 
@@ -71,6 +73,7 @@ public class Tower
             _selected = value;
         }
     }
+
 
     //returns the object component on the class
     public GameObject TowerObj
@@ -244,6 +247,19 @@ public class Tower
         }
     }
 
+    public Vector3 TowerRotation
+    {
+        get
+        {
+            return tower_rotation;
+        }
+
+        set
+        {
+            tower_rotation = value;
+        }
+    }
+
     //draws a line between two points
     public void DrawLine(Vector3 start, Vector3 end, Color color)
     {
@@ -306,6 +322,12 @@ public class Tower
                 {
                     DrawLine(Position, select_unit.transform.position, Color.green);
                     shoot_wait_remaining = 1 / fire_rate;
+
+                    Vector3 temp;
+                    temp = new Vector3(select_unit.transform.position.x, select_unit.transform.position.y, Position.z);
+
+                    tower_rotation = temp - Position;
+
 
                     TowerTools.DestroyGameObj(select_unit);
                 

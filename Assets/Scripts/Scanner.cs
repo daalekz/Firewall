@@ -24,6 +24,16 @@ public class Scanner : Tower
                 -2
             );
 
+        tower_gun = TowerTools.Instantiate(deploy_instance.tower_scanner_tower);
+        tower_gun.transform.position = Position;
+        //rendered_tower.GetComponent<Renderer>().sortingOrder = 2;
+        tower_gun.transform.position = new Vector3
+            (
+                tower_gun.transform.position.x,
+                tower_gun.transform.position.y,
+                -3
+            );
+
         AimLine = new GameObject();
         AimLine.AddComponent<LineRenderer>();
         AimLine.name = "Tower Aim Line";

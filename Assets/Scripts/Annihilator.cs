@@ -22,6 +22,15 @@ public class Annihilator : Tower {
                 -2
             );
 
+        tower_gun = TowerTools.Instantiate(deploy_instance.tower_annihilator_turret);
+        tower_gun.transform.position = Position;
+        //rendered_tower.GetComponent<Renderer>().sortingOrder = 2;
+        tower_gun.transform.position = new Vector3
+            (
+                tower_gun.transform.position.x,
+                tower_gun.transform.position.y,
+                -3
+            );
 
         AimLine = new GameObject();
         AimLine.AddComponent<LineRenderer>();

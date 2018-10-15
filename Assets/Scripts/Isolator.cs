@@ -10,7 +10,7 @@ public class Isolator : Tower
         TargetEnd = true;
         Damage = 30;
         Range = 0;
-        FireRate = 1;
+        FireRate = 0.11f;
 
         rendered_tower = TowerTools.Instantiate(deploy_instance.tower_isolator, Position, Quaternion.identity);
         Color = rendered_tower.GetComponent<SpriteRenderer>().color;
@@ -22,6 +22,16 @@ public class Isolator : Tower
                 rendered_tower.transform.position.x,
                 rendered_tower.transform.position.y,
                 -2
+            );
+
+        tower_gun = TowerTools.Instantiate(deploy_instance.tower_isolator_turret);
+        tower_gun.transform.position = Position;
+        //rendered_tower.GetComponent<Renderer>().sortingOrder = 2;
+        tower_gun.transform.position = new Vector3
+            (
+                tower_gun.transform.position.x,
+                tower_gun.transform.position.y,
+                -3
             );
 
         AimLine = new GameObject();
@@ -92,31 +102,50 @@ public class Isolator : Tower
                 }
             }
 
-            if (select_unit != null)
+            //to prevent any errors, the isolator can only shoot object once they pass the first NAVPOINT
+            if (select_unit != null && gc.WaveController.WaveObjSpawned > 1 && HighNavPoint > 0)
             {
-                switch (Tower_Type)
+
+                Vector3 temp;
+                temp = new Vector3(select_unit.transform.position.x, select_unit.transform.position.y, Position.z);
+
+                TowerRotation = temp - Position;
+
+                select_unit.GetComponent<AIController>().data.ApplyDamage(Convert.ToInt32(Damage));
+                if (select_unit.GetComponent<AIController>().data.Health <= 0)
                 {
-                    case TowerType.Scanner:
-                        select_unit.GetComponent<AIController>().data.Speed = select_unit.GetComponent<AIController>().data.Speed / 2;
-                        break;
-
-                    default:
-                        select_unit.GetComponent<AIController>().data.ApplyDamage(Convert.ToInt32(Damage));
-
-                        if (select_unit.GetComponent<AIController>().data.Health <= 0)
-                        {
-                            TowerTools.DestroyGameObj(select_unit);
-                            enemy_queue.Remove(select_unit);
-                            closest_distance = 0;
-                        }
-                        break;
-
+                    TowerTools.DestroyGameObj(select_unit);
+                    enemy_queue.Remove(select_unit);
+                    closest_distance = 0;
                 }
 
                 DrawLine(Position, select_unit.transform.position, Color.green);
                 Shoot_Wait_Remaining = 1 / FireRate;
             }
         }
+    }
 
+    public override void Render()
+    {
+        base.Render();
+
+        float speed = 5;
+        // The step size is equal to speed times frame time.
+        Vector3 dir, current, target;
+
+        if (TowerRotation != null)
+        {
+            //code taken and modified from: https://answers.unity.com/questions/650460/rotating-a-2d-sprite-to-face-a-target-on-a-single.html
+
+            float angle = Mathf.Atan2(-TowerRotation.x, TowerRotation.y) * Mathf.Rad2Deg;
+
+            Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
+            tower_gun.transform.rotation = Quaternion.Slerp(tower_gun.transform.rotation, q, Time.deltaTime * speed);
+
+        }
+        else
+        {
+            tower_gun.transform.rotation = Quaternion.LookRotation(Position - Position, Vector3.up);
+        }
     }
 }

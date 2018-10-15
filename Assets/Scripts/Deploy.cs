@@ -18,11 +18,20 @@ public class Deploy : MonoBehaviour
     private TowerType build_type;
 
     public GameObject tower_template;
-    public GameObject tower_defender;
-    public GameObject tower_extractor;
-    public GameObject tower_isolator;
-    public GameObject tower_scanner;
     public GameObject tower_annihilator;
+    public GameObject tower_annihilator_turret;
+
+    public GameObject tower_defender;
+    public GameObject tower_defender_turret;
+
+    public GameObject tower_extractor;
+    public GameObject tower_extractor_turret;
+
+    public GameObject tower_isolator;
+    public GameObject tower_isolator_turret;
+
+    public GameObject tower_scanner;
+    public GameObject tower_scanner_tower;
 
     //initalized necessary variables, objects and other data
     private void Awake()
@@ -37,7 +46,7 @@ public class Deploy : MonoBehaviour
         hover_sphere.GetComponent<Renderer>().sortingOrder = 3;
 
         selected_tower = null;
-        build_type = TowerType.Annihilator;
+        build_type = TowerType.Isolator;
     }
 
     private void Update()
@@ -93,7 +102,7 @@ public class Deploy : MonoBehaviour
                 //removes tower object for Map_Towers list
                 grid.GameMap.Map_Towers.Remove(DeployTools.GetTower(grid.GameMap.Map_Towers, selected_tower));
                 DeployTools.Manage_Tile_Type(selected_tower.Position, TileType.empty, grid.GameMap.Map_Tiles);
-                
+                Destroy(selected_tower.tower_gun);
                 //gets rid on the actual tower object
                 Destroy(selected_tower.TowerObj);
 
@@ -181,6 +190,7 @@ public class Deploy : MonoBehaviour
         //gets the given tile for the position that the user clicked, and checks that a tower can actually be placed there
         if (temp_tile.Type == TileType.empty)
         {
+
             //sets the tile, to TileType.turrent, letting the game know that a turrent has been placed there
             DeployTools.Manage_Tile_Type(finalPosition, TileType.turret, grid.GameMap.Map_Tiles);
 
