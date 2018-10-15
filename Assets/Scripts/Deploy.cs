@@ -9,18 +9,14 @@ using System;
 */
 public class Deploy : MonoBehaviour
 {
+    private InGameMenuController igmc;
+
     //needs to get the data from camera and grid (hence they are passed into script via the object)
     public Grid_Setup grid;
     public Camera cam;
     public static Tower selected_tower;
     private GameObject hover_sphere;
     private TowerType build_type;
-
-	public void SetBuildType(int type)
-	{
-		build_type = (TowerType)type;
-	}
-
 
 	//initalized necessary variables, objects and other data
 	private void Awake()
@@ -33,6 +29,11 @@ public class Deploy : MonoBehaviour
 
         selected_tower = null;
         build_type = TowerType.Defender;
+    }
+
+    void Start ()
+    {
+        igmc = InGameMenuController.instance;
     }
 
     private void Update()
@@ -114,6 +115,12 @@ public class Deploy : MonoBehaviour
             hover_sphere.transform.localScale = new Vector3(0, 0, 0);
         }
     }
+
+	public void SetBuildType(int type)
+	{
+		build_type = (TowerType)type;
+        igmc.ToggleMenu(); // Close menu upon selecting a tower
+	}
 
     /*
      * Summary:

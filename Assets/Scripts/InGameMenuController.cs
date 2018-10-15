@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InGameMenuController : MonoBehaviour {
+public class InGameMenuController : MonoBehaviour
+{
+	public static InGameMenuController instance;
 
 	//Active and inactive targets for the panel position
 	public Transform Active, Inactive;
@@ -17,6 +19,11 @@ public class InGameMenuController : MonoBehaviour {
 	//Current target of the panel
 	private Transform Target;
 
+    void Awake ()
+	{
+		if (instance != null) throw new System.Exception();
+		instance = this;
+	}
 
 	void Start()
 	{
