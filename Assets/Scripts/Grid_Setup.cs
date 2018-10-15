@@ -68,8 +68,10 @@ public class Grid_Setup : MonoBehaviour
             for (j = 0; j < NumPaths; j++)
             {
                 GameObject NavPoint = new GameObject();
+                Debug.Log(NumPaths);
 
                 array_size = Convert.ToInt32(sr.ReadLine());
+                Debug.Log(array_size);
                 //initializes the return array, with the size (based on text file line)
                 NavPoints = new GameObject[array_size];
                 BoxCollider2D boxcollider = gameObject.AddComponent<BoxCollider2D>();
@@ -198,8 +200,11 @@ public class Grid_Setup : MonoBehaviour
     void OnDraw(Map map)
     {
         GameObject cube = null;
+        GameObject placement_tiles = new GameObject();
+        placement_tiles.name = "Placement Tiles";
+
         GameObject parent_path = GameObject.Find("Path");
-        GameObject placement_tiles = GameObject.Find("PlacementTiles");
+
         parent_path.transform.localScale = new Vector3(map.Width, map.Height, 1);
 
         foreach (MapTile tile in map.Map_Tiles)

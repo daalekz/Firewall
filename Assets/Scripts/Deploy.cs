@@ -51,7 +51,7 @@ public class Deploy : MonoBehaviour
         hover_sphere.GetComponent<Renderer>().sortingOrder = 3;
 
         selected_tower = null;
-        build_type = TowerType.Defender;
+        build_type = TowerType.Isolator;
     }
 
     void Start ()
@@ -202,41 +202,44 @@ public class Deploy : MonoBehaviour
 
         MapTile temp_tile = DeployTools.SearchTiles(finalPosition, grid.GameMap.Map_Tiles);
 
-        //gets the given tile for the position that the user clicked, and checks that a tower can actually be placed there
-        if (temp_tile.Type == TileType.empty)
+        if (temp_tile != null)
         {
-            //sets the tile, to TileType.turrent, letting the game know that a turrent has been placed there
-            DeployTools.Manage_Tile_Type(finalPosition, TileType.turret, grid.GameMap.Map_Tiles);
-
-            if (grid.GameMap.Map_Towers != null)
+            //gets the given tile for the position that the user clicked, and checks that a tower can actually be placed there
+            if (temp_tile.Type == TileType.empty)
             {
-                switch (build_type)
+                //sets the tile, to TileType.turrent, letting the game know that a turrent has been placed there
+                DeployTools.Manage_Tile_Type(finalPosition, TileType.turret, grid.GameMap.Map_Tiles);
+
+                if (grid.GameMap.Map_Towers != null)
                 {
-                    case TowerType.Annihilator:
-                        grid.GameMap.Map_Towers.Add(new Annihilator(finalPosition));
-                        break;
+                    switch (build_type)
+                    {
+                        case TowerType.Annihilator:
+                            grid.GameMap.Map_Towers.Add(new Annihilator(finalPosition));
+                            break;
 
-                    case TowerType.Defender:
-                        grid.GameMap.Map_Towers.Add(new Defender(finalPosition));
-                        break;
+                        case TowerType.Defender:
+                            grid.GameMap.Map_Towers.Add(new Defender(finalPosition));
+                            break;
 
-                    case TowerType.Extractor:
-                        //grid.GameMap.Map_Towers.Add();
-                        break;
+                        case TowerType.Extractor:
+                            //grid.GameMap.Map_Towers.Add();
+                            break;
 
-                    case TowerType.Isolator:
-                        grid.GameMap.Map_Towers.Add(new Isolator(finalPosition));
-                        break;
+                        case TowerType.Isolator:
+                            grid.GameMap.Map_Towers.Add(new Isolator(finalPosition));
+                            break;
 
-                    case TowerType.Scanner:
-                        grid.GameMap.Map_Towers.Add(new Scanner(finalPosition));
-                        break;
+                        case TowerType.Scanner:
+                            grid.GameMap.Map_Towers.Add(new Scanner(finalPosition));
+                            break;
+                    }
                 }
             }
-        }
-        else
-        {
-            //add code to display overlay, if tower cannot be placed on it
+            else
+            {
+                //add code to display overlay, if tower cannot be placed on it
+            }
         }
     }
 
