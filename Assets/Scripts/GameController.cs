@@ -9,7 +9,8 @@ public class GameController : MonoBehaviour
 	private WaveController wc;
 
     private GameObject[] navPointsArray = new GameObject[0]; // Array of empty game objects used as nodes to navigate between || FIX
-	public Text WaveDisplay;
+	public Text WaveDisplay, HealthDisplay;
+	public Player PlayerBoi { get; private set; }
 
 	void Awake ()
 	{
@@ -20,11 +21,19 @@ public class GameController : MonoBehaviour
 	void Start ()
 	{
 		wc = WaveController.instance;
+		PlayerBoi = new Player(100);
 	}
 
 	void Update ()
 	{
 		WaveDisplay.text = "Wave: " + wc.WaveCount.ToString();
+		HealthDisplay.text = "Health: " + PlayerBoi.Health.ToString();
+	}
+
+	void OnTriggerExit2D(Collider2D col)
+	{
+		PlayerBoi.ApplyDamage(col.gameObject.GetComponent<AIController>().data.Damage);
+		Destroy(col.gameObject);
 	}
 
     public GameObject[] navPoints
