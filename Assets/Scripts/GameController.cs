@@ -8,15 +8,50 @@ public class GameController : MonoBehaviour
     public static GameController instance { get; private set; }
     private WaveController wc;
 
-    // turn into list
+    private GameObject[] navPointsArray = new GameObject[0]; // Array of empty game objects used as nodes to navigate between || FIX
+	public Text WaveDisplay, HealthDisplay;
+	public Player PlayerBoi { get; private set; }
 
     private List<GameObject[]> navPointsArray = new List<GameObject[]>(); // Array of empty game objects used as nodes to navigate between || FIX
     public Text WaveDisplay;
 
-    void Awake()
+
+	void Start ()
+	{
+		wc = WaveController.instance;
+		PlayerBoi = new Player(100);
+	}
+
+  void Awake()
+  {
+      if (instance != null) throw new System.Exception();
+      instance = this;
+  }
+
+	void Update ()
+	{
+		WaveDisplay.text = "Wave: " + wc.WaveCount.ToString();
+		HealthDisplay.text = "Health: " + PlayerBoi.Health.ToString();
+	}
+
+	void OnTriggerExit2D(Collider2D col)
+	{
+		PlayerBoi.ApplyDamage(col.gameObject.GetComponent<AIController>().data.Damage);
+		Destroy(col.gameObject);
+	}
+
+
+    public List<GameObject[]> navPoints
     {
-        if (instance != null) throw new System.Exception();
-        instance = this;
+        get
+        {
+            return navPointsArray;
+        }
+
+        set
+        {
+            navPointsArray = value;
+        }
     }
 
     public WaveController WaveController
@@ -29,29 +64,6 @@ public class GameController : MonoBehaviour
         set
         {
             wc = value;
-        }
-    }
-
-    void Start()
-    {
-        wc = WaveController.instance;
-    }
-
-    void Update()
-    {
-        WaveDisplay.text = "Wave: " + wc.WaveCount.ToString();
-    }
-
-    public List<GameObject[]> navPoints
-    {
-        get
-        {
-            return navPointsArray;
-        }
-
-        set
-        {
-            navPointsArray = value;
         }
     }
 }
