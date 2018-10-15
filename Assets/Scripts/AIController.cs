@@ -101,4 +101,17 @@ public class AIController : MonoBehaviour
             data.PathNum = value;
         }
     }
+
+    public Enemy EnemyObj
+    {
+        get
+        {
+            return data;
+        }
+
+        set
+        {
+            data = value;
+        }
+    }
 }

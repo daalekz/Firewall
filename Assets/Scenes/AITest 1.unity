@@ -287,6 +287,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   WaveDisplay: {fileID: 1123542491}
+  HealthDisplay: {fileID: 0}
 --- !u!4 &688192187
 Transform:
   m_ObjectHideFlags: 0
@@ -1045,6 +1046,11 @@ Prefab:
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 223563040208639980, guid: 20e5119c173824f4db1e7ba83a6410af,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 20e5119c173824f4db1e7ba83a6410af, type: 2}

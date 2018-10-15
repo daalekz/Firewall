@@ -8,12 +8,10 @@ public class GameController : MonoBehaviour
     public static GameController instance { get; private set; }
     private WaveController wc;
 
-    private GameObject[] navPointsArray = new GameObject[0]; // Array of empty game objects used as nodes to navigate between || FIX
 	public Text WaveDisplay, HealthDisplay;
 	public Player PlayerBoi { get; private set; }
 
     private List<GameObject[]> navPointsArray = new List<GameObject[]>(); // Array of empty game objects used as nodes to navigate between || FIX
-    public Text WaveDisplay;
 
 
 	void Start ()
@@ -31,7 +29,11 @@ public class GameController : MonoBehaviour
 	void Update ()
 	{
 		WaveDisplay.text = "Wave: " + wc.WaveCount.ToString();
-		HealthDisplay.text = "Health: " + PlayerBoi.Health.ToString();
+
+        if (PlayerBoi != null)
+        {
+            HealthDisplay.text = "Health: " + PlayerBoi.Health.ToString();
+        }
 	}
 
 	void OnTriggerExit2D(Collider2D col)
