@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour
     public static GameController instance { get; private set; }
     private WaveController wc;
 
-    // turn into list 
+    // turn into list
 
     private List<GameObject[]> navPointsArray = new List<GameObject[]>(); // Array of empty game objects used as nodes to navigate between || FIX
     public Text WaveDisplay;

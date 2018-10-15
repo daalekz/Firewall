@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -8,7 +9,11 @@ using System;
 */
 public class Deploy : MonoBehaviour
 {
+
     public static Deploy instance { get; private set; }
+
+    private InGameMenuController igmc;
+
 
     //needs to get the data from camera and grid (hence they are passed into script via the object)
     public Grid_Setup grid;
@@ -46,7 +51,12 @@ public class Deploy : MonoBehaviour
         hover_sphere.GetComponent<Renderer>().sortingOrder = 3;
 
         selected_tower = null;
-        build_type = TowerType.Isolator;
+        build_type = TowerType.Defender;
+    }
+
+    void Start ()
+    {
+        igmc = InGameMenuController.instance;
     }
 
     private void Update()
@@ -55,14 +65,14 @@ public class Deploy : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 
         //draws tower
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             if (Physics.Raycast(ray, out hitInfo))
             {
                 CreateTower(hitInfo.point);
             }
         }
-        
+
         //selects a tower
         if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl))
         {
@@ -71,7 +81,7 @@ public class Deploy : MonoBehaviour
                 var finalPosition = grid.GetNearestPointOnGrid(hitInfo.point);
                 finalPosition.z = 0;
 
-                //checks if the map towers list has been initalized 
+                //checks if the map towers list has been initalized
                 if (grid.GameMap.Map_Towers != null)
                 {
                     //checks if there is a pre-exisitng selected tower
@@ -85,7 +95,7 @@ public class Deploy : MonoBehaviour
                     }
                     else
                     {
-                        //removes existing selected tower from variables and changes object data 
+                        //removes existing selected tower from variables and changes object data
                         DeployTools.GetTower(grid.GameMap.Map_Towers, selected_tower).Selected = false;
                         selected_tower = null;
                     }
@@ -129,6 +139,11 @@ public class Deploy : MonoBehaviour
         }
     }
 
+	public void SetBuildType(int type)
+	{
+		build_type = (TowerType)type;
+        igmc.ToggleMenu(); // Close menu upon selecting a tower
+	}
 
     /*
      * Summary:
@@ -140,14 +155,14 @@ public class Deploy : MonoBehaviour
         //finalPosition.z = -1;
 
         MapTile temp_tile = DeployTools.SearchTiles(finalPosition, grid.GameMap.Map_Tiles);
-            
+
         //checks that the value returned, is actually a tile
         if (temp_tile == null)
         {
             hover_sphere.transform.localScale = new Vector3(0, 0, 0);
             return;
         }
-        
+
         switch (temp_tile.Type)
         {
             //check that the tile is a of tiletype empty
@@ -190,7 +205,6 @@ public class Deploy : MonoBehaviour
         //gets the given tile for the position that the user clicked, and checks that a tower can actually be placed there
         if (temp_tile.Type == TileType.empty)
         {
-
             //sets the tile, to TileType.turrent, letting the game know that a turrent has been placed there
             DeployTools.Manage_Tile_Type(finalPosition, TileType.turret, grid.GameMap.Map_Tiles);
 

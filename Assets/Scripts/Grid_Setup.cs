@@ -8,7 +8,10 @@ using System;
 Class taken and modified from:
 https://unity3d.college/2017/10/08/simple-unity3d-snap-grid-system/
 */
-public class Grid_Setup : MonoBehaviour {
+public class Grid_Setup : MonoBehaviour
+{
+    private WaveController wc;
+
     private float size = 1f;
     private List<MapTile> tiles = new List<MapTile>();
     private float x_start, y_start;
@@ -17,7 +20,10 @@ public class Grid_Setup : MonoBehaviour {
     public GameObject map_prefab;
 
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
+        wc = WaveController.instance;
+
         //initalized the x and y values for the translation of the map
         //so that it's centre can be and (0,0)
         x_start = 0;
@@ -35,7 +41,7 @@ public class Grid_Setup : MonoBehaviour {
     void Update() {
         foreach (Tower tower in game_map.Map_Towers)
         {
-            tower.Fire(gc.WaveController.SpawnedObjects);
+            tower.Fire(wc.SpawnedObjects);
         }
     }
 
