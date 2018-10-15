@@ -43,9 +43,7 @@ public class AIController : MonoBehaviour
 		// Move the AI towards the current node
 		transform.position += (direction * data.Speed) * Time.deltaTime;
         //specifies z (so that it is rendered ontop)
-        //sets color to blue (so that it is visible)
         transform.position = new Vector3(transform.position.x, transform.position.y, -1);
-        GetComponent<Renderer>().material.color = Color.blue;
 	}
 
 	void OnTriggerEnter2D (Collider2D col)
