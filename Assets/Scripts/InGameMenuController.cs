@@ -35,8 +35,6 @@ public class InGameMenuController : MonoBehaviour {
 	{
 		//Moves the panel towards the target position
 		transform.position = Vector3.Lerp(transform.position, Target.position, 0.1f);
-
-		//
 	}
 
 	//Changes the target position of the pannel to active or inactive
