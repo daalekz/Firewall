@@ -11,7 +11,10 @@ public class GameController : MonoBehaviour
 	public Text WaveDisplay, HealthDisplay;
 	public Player PlayerBoi { get; private set; }
 
-    private List<GameObject[]> navPointsArray = new List<GameObject[]>(); // Array of empty game objects used as nodes to navigate between || FIX
+
+    //fix
+    private List<GameObject[]> navPointsArray = new List<GameObject[]>();
+    // Array of empty game objects used as nodes to navigate between || FIX
     private GameObject GameOverText;
 
 
@@ -33,8 +36,6 @@ public class GameController : MonoBehaviour
 	{
 		WaveDisplay.text = "Wave: " + wc.WaveCount.ToString();
         
-
-
         foreach (GameObject enemy in wc.SpawnedObjects)
         {
             float current_point = enemy.transform.position.x;
@@ -47,23 +48,18 @@ public class GameController : MonoBehaviour
                 PlayerBoi.ApplyDamage(50);
                 break;
             }
-
-
         }
 
         if (PlayerBoi.Health <= 0)
         {
             GameOverText.SetActive(true);
         }
-
-
+        
         if (PlayerBoi != null)
         {
-            HealthDisplay.text = "Health: " + PlayerBoi.Health.ToString();
+            //HealthDisplay.text = "Health: " + PlayerBoi.Health.ToString();
         }
-
-        Debug.Log(PlayerBoi.Health);
-	}
+    }
 
 	void OnTriggerExit2D(Collider2D col)
 	{

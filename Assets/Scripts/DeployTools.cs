@@ -43,11 +43,11 @@ public class DeployTools
         return null;
     }
 
-    public static Tower GetTower(List<Tower> towers, Tower selected_tower)
+    public static Tower GetTower(List<Tower> towers, Tower selected_towers_tower)
     {
         foreach (Tower tower in towers)
         {
-            if (selected_tower == tower)
+            if (selected_towers_tower == tower)
             {
                 return tower;
             }

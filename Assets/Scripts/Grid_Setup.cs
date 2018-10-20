@@ -11,13 +11,15 @@ https://unity3d.college/2017/10/08/simple-unity3d-snap-grid-system/
 public class Grid_Setup : MonoBehaviour
 {
     private WaveController wc;
-
-    private float size = 1f;
-    private List<MapTile> tiles = new List<MapTile>();
     private float x_start, y_start;
     GameController gc;
     private Map game_map;
+    public GameObject map_tile_a;
+    public GameObject map_tile_b;
+    public GameObject map_tile_c;
     public GameObject map_prefab;
+
+    private float size = 1f;
 
     // Use this for initialization
     void Start()
@@ -32,8 +34,6 @@ public class Grid_Setup : MonoBehaviour
         game_map = GetMapData();
 
         gc.navPoints = GetNavPoints();
-
-
         OnDraw(game_map);
     }
     
@@ -41,7 +41,7 @@ public class Grid_Setup : MonoBehaviour
     void Update() {
         foreach (Tower tower in game_map.Map_Towers)
         {
-            tower.Fire(wc.SpawnedObjects);
+            tower.Attack(wc.SpawnedObjects);
         }
     }
 
@@ -68,10 +68,8 @@ public class Grid_Setup : MonoBehaviour
             for (j = 0; j < NumPaths; j++)
             {
                 GameObject NavPoint = new GameObject();
-                Debug.Log(NumPaths);
 
                 array_size = Convert.ToInt32(sr.ReadLine());
-                Debug.Log(array_size);
                 //initializes the return array, with the size (based on text file line)
                 NavPoints = new GameObject[array_size];
                 BoxCollider2D boxcollider = gameObject.AddComponent<BoxCollider2D>();
@@ -180,7 +178,7 @@ public class Grid_Setup : MonoBehaviour
     //for a given mouse position, the closest grid point is found
     public Vector3 GetNearestPointOnGrid(Vector3 position)
     {
-        position -= transform.position;
+        position -= this.transform.position;
 
         int xCount = Mathf.RoundToInt(position.x / size);
         int yCount = Mathf.RoundToInt(position.y / size);
@@ -191,7 +189,7 @@ public class Grid_Setup : MonoBehaviour
             (float)yCount * size,
             (float)zCount * size);
 
-        result += transform.position;
+        result += this.transform.position;
 
         return result;
     }
@@ -199,6 +197,8 @@ public class Grid_Setup : MonoBehaviour
     //draws the game squares 
     void OnDraw(Map map)
     {
+        System.Random rnd = new System.Random();
+
         GameObject cube = null;
         GameObject placement_tiles = new GameObject();
         placement_tiles.name = "Placement Tiles";
@@ -209,13 +209,14 @@ public class Grid_Setup : MonoBehaviour
 
         foreach (MapTile tile in map.Map_Tiles)
         {
+            int random = rnd.Next(0, 3);
 
             //draws differently colored squares depending on the enum value
             switch (tile.Type)
             {
                 case (TileType.empty):
-                    cube = Instantiate(map_prefab, tile.Position, Quaternion.identity);
 
+                    cube = Instantiate(map_prefab, tile.Position, Quaternion.identity);
                     //cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     cube.transform.position = tile.Position;
                     //cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
@@ -226,9 +227,22 @@ public class Grid_Setup : MonoBehaviour
                     break;
 
                 case (TileType.path):
-                    cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    switch (random)
+                    {
+                        case 0:
+                            cube = Instantiate(map_tile_a, tile.Position, Quaternion.identity);
+                            break;
+
+                        case 1:
+                            cube = Instantiate(map_tile_b, tile.Position, Quaternion.identity);
+                            break;
+
+                        case 2:
+                            cube = Instantiate(map_tile_c, tile.Position, Quaternion.identity);
+                            break;
+                    }
                     cube.transform.position = tile.Position;
-                    cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
+                    //cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
                     cube.GetComponent<Renderer>().material.color = Color.white;
                     cube.transform.parent = parent_path.transform;
                     cube.name = "MapTile";
@@ -280,6 +294,11 @@ public class Grid_Setup : MonoBehaviour
         get
         {
             return game_map;
+        }
+
+        set
+        {
+            game_map = value;
         }
     }
 }

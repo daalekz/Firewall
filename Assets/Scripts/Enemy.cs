@@ -39,5 +39,9 @@ public abstract class Enemy
         }
     }
 
-   
+    public void ReduceSpeed(float reduction_factor)
+    {
+        Speed = Speed / reduction_factor;
+    }
+    
 }

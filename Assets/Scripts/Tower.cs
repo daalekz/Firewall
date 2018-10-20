@@ -9,28 +9,32 @@ using System;
 */
 public class Tower
 {
+    Color shape_color;
+
+    GameObject aim_line;
+    private float shoot_wait_remaining;
+    private float display_shot_remaining = 0.2f;
+    private TowerType _tower_type;
+    private Sprite graphical_tower;
     private Deploy deploy;
 
     private Vector3 _position;
-    public GameObject rendered_tower;
-    public GameObject tower_gun;
+    
     private bool _selected;
     private float fire_rate;
     private float radius;
     private float damage;
     private bool target_end = false;
-    private bool vert = false;
     private Vector3 tower_rotation;
 
-    Color shape_color;
-
-    GameObject aim_line;
+    public GameObject selected_unit = null;
+    public float closest_distance = 0;
+    public GameObject rendered_tower;
+    public GameObject tower_gun;
     public GameController gc;
-    private float shoot_wait_remaining;
     public float display_shot = 0.2f;
-    private float display_shot_remaining = 0.2f;
-    private TowerType _tower_type;
-    private Sprite graphical_tower;
+
+    public bool Active;
     
     public Tower(Vector3 position, TowerType type)
     {
@@ -39,16 +43,27 @@ public class Tower
         _position = position;
         shoot_wait_remaining = 0;
         gc = GameController.instance;
-    }
 
+        Active = true;
+    }
 
     //tell the program how the tower should be drawn
     public virtual void Render()
     {
+        if (Active)
+        {
+            AimLine.SetActive(true);
+            tower_gun.SetActive(true);
+            TowerObj.SetActive(true);
+        }
+        else
+        {
+            AimLine.SetActive(false);
+            tower_gun.SetActive(false);
+            TowerObj.SetActive(false);
+        }
 
-
-
-        if (_selected)
+        if (this.Selected)
         {
             //rendered_tower.GetComponent<Renderer>().material.color = Color.yellow;
             rendered_tower.GetComponent<SpriteRenderer>().color = Color.yellow;
@@ -58,6 +73,16 @@ public class Tower
             //rendered_tower.GetComponent<Renderer>().material.color = Color.cyan;
             rendered_tower.GetComponent<SpriteRenderer>().color = Color.cyan;
         }
+    }
+
+    public void UpdatePosition(Vector3 newPos)
+    {
+        Position = newPos;
+        AimLine.GetComponent<LineRenderer>().SetPosition(1, newPos);
+        AimLine.GetComponent<LineRenderer>().SetPosition(0, newPos);
+
+        tower_gun.transform.position = newPos;
+        TowerObj.transform.position = newPos;
     }
 
     //returns if the given tower has been selected
@@ -169,19 +194,6 @@ public class Tower
         }
     }
 
-    public bool Vert
-    {
-        get
-        {
-            return vert;
-        }
-
-        set
-        {
-            vert = value;
-        }
-    }
-
     public float FireRate
     {
         get
@@ -221,7 +233,7 @@ public class Tower
         }
     }
 
-    public bool TargetEnd
+    public bool SelectLast
     {
         get
         {
@@ -260,6 +272,7 @@ public class Tower
         }
     }
 
+
     //draws a line between two points
     public void DrawLine(Vector3 start, Vector3 end, Color color)
     {
@@ -271,82 +284,100 @@ public class Tower
         lr.SetPosition(1, end);
     }
 
+    public virtual void Target(List<GameObject> enemy_queue)
+    {
+        foreach (GameObject enemy in enemy_queue)
+        {
+            //if the distance hasn't been set, then closest enemy is set to the currently selected enemy in the list
+            if (closest_distance == 0)
+            {
+                closest_distance = Vector3.Distance(Position, enemy.transform.position);
+                selected_unit = enemy;
+                AimLine.GetComponent<LineRenderer>().SetPosition(1, Position);
+                AimLine.GetComponent<LineRenderer>().SetPosition(0, Position);
+            }
+            else
+            {
+                //if the previously closest enemy HAS been set, then it is checked if there is a closer enemy
+                if (Vector3.Distance(Position, enemy.transform.position) <= closest_distance)
+                {
+                    selected_unit = enemy;
+                    closest_distance = Vector3.Distance(Position, enemy.transform.position);
+                }
+            }
+        }
+    }
+
+
+
     //targets and shoots the closest enemy
     //should be within the turret's radius
     //but not implemented quite yet!
-    public virtual void Fire(List<GameObject> enemy_queue)
+    public virtual bool Fire(List<GameObject> enemy_queue)
     {
         //local fields store the closest game object and the distance of the object from the turret
-        GameObject select_unit = null;
-        float closest_distance = 0;
         target_end = true;
         GameObject[] navPoints = new GameObject[0];
 
-        shoot_wait_remaining -= Time.deltaTime;
-        display_shot_remaining -= Time.deltaTime;
+        Shoot_Wait_Remaining -= Time.deltaTime;
+        Display_Shot_Remaining -= Time.deltaTime;
 
-        if (display_shot_remaining <= 0)
+        if (Display_Shot_Remaining <= 0)
         {
-            aim_line.GetComponent<LineRenderer>().SetPosition(1, new Vector3(0,0,0));
-            aim_line.GetComponent<LineRenderer>().SetPosition(0, new Vector3(0,0,0));
-
-            display_shot_remaining = display_shot;
+            AimLine.GetComponent<LineRenderer>().SetPosition(0, Position);
+            AimLine.GetComponent<LineRenderer>().SetPosition(1, Position);
+            Display_Shot_Remaining = display_shot;
         }
 
         if (shoot_wait_remaining <= 0f) {
             //goes through all of the enemy currently present on the board
-            foreach (GameObject enemy in enemy_queue)
-            {
-                //if the distance hasn't been set, then closest enemy is set to the currently selected enemy in the list
-                if (closest_distance == 0)
-                {
-                    closest_distance = Vector3.Distance(Position, enemy.transform.position);
-                    select_unit = enemy;
-                    AimLine.GetComponent<LineRenderer>().SetPosition(1, Position);
-                    AimLine.GetComponent<LineRenderer>().SetPosition(0, Position);
-                }
-                else
-                {
-                    //if the previously closest enemy HAS been set, then it is checked if there is a closer enemy
-                    if (Vector3.Distance(Position, enemy.transform.position) < closest_distance)
-                    {
-                        select_unit = enemy;
-                        closest_distance = Vector3.Distance(Position, enemy.transform.position);
-                    }
-                }
-            }
-            //if the select_unit has been set to an actually gameobject instance
+            Target(enemy_queue);
+
+            //if the selected_unit has been set to an actually gameobject instance
             //then a line is drawn between the turret and the gameobject
 
-            if (select_unit != null)
+            if (selected_unit != null)
             {
                 if (closest_distance <= radius)
                 {
-                    DrawLine(Position, select_unit.transform.position, Color.green);
-                    shoot_wait_remaining = 1 / fire_rate;
-
-                    Vector3 temp;
-                    temp = new Vector3(select_unit.transform.position.x, select_unit.transform.position.y, Position.z);
-
-                    tower_rotation = temp - Position;
-                    
-                    select_unit.GetComponent<AIController>().data.ApplyDamage(Convert.ToInt32(Damage));
-                    if (select_unit.GetComponent<AIController>().data.Health <= 0)
-                    {
-                        TowerTools.DestroyGameObj(select_unit);
-
-                        enemy_queue.Remove(select_unit);
-                    }
-                    
-                    closest_distance = 0;
+                    return true;
                 }
                 else
                 {
-                    select_unit = null;
-                    closest_distance = 0;
-                    aim_line.GetComponent<LineRenderer>().SetPosition(1, Position);
+                    return false;
                 }
             }
+        }
+        return false;
+    }
+
+    public virtual void Attack(List<GameObject> enemy_queue)
+    {
+        if (Fire(enemy_queue) && Active)
+        {
+            Vector3 temp;
+            temp = new Vector3(selected_unit.transform.position.x, selected_unit.transform.position.y, Position.z);
+
+            tower_rotation = temp - Position;
+
+            selected_unit.GetComponent<AIController>().data.ApplyDamage(Convert.ToInt32(Damage));
+            if (selected_unit.GetComponent<AIController>().data.Health <= 0)
+            {
+                TowerTools.DestroyGameObj(selected_unit);
+
+                enemy_queue.Remove(selected_unit);
+            }
+
+            closest_distance = 0;
+
+            DrawLine(Position, selected_unit.transform.position, Color.green);
+            shoot_wait_remaining = 1 / fire_rate;
+        }
+        else
+        {
+            selected_unit = null;
+            closest_distance = 0;
+            aim_line.GetComponent<LineRenderer>().SetPosition(1, Position);
         }
     }
 }

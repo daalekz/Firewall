@@ -181,6 +181,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0856b6ff93b74834da9d88fe26e5255c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  map_tile_a: {fileID: 1001206787141414, guid: 5f297a744ead94f489dd91b45e53fd25, type: 2}
+  map_tile_b: {fileID: 1001206787141414, guid: 2ba90286dbb90624986b6558a244d257, type: 2}
+  map_tile_c: {fileID: 1001206787141414, guid: 30cc1e69570a23f489a81d4bf303090d, type: 2}
   map_prefab: {fileID: 1806254190466008, guid: 2054e1391dd59ac458ffd38b01fbeda9, type: 2}
 --- !u!1 &447008431
 GameObject:

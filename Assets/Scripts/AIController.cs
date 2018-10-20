@@ -42,7 +42,6 @@ public class AIController : MonoBehaviour
 
         //set that path number here
 
-
         // Set the initial direction the AI will move in
         direction = gc.navPoints[data.PathNum][1].transform.position - gc.navPoints[data.PathNum][0].transform.position;
         direction = direction / direction.magnitude;
@@ -89,6 +88,11 @@ public class AIController : MonoBehaviour
         get
         {
             return nodeIndex;
+        }
+
+        set
+        {
+            nodeIndex = value;
         }
     }
 
