@@ -18,6 +18,7 @@ public class WaveController : MonoBehaviour
 	[SerializeField]
 	private float SpawnDelay = 1.0f;
     private List<GameObject> spawned_objects;
+    public int WaveObjSpawned = 0;
 
 	void Awake ()
 	{
@@ -46,6 +47,7 @@ public class WaveController : MonoBehaviour
         
         //active game objects are added to list (so that tower can target them)
         spawned_objects.Add(spawner.Spawn(wave.Dequeue()));
+        WaveObjSpawned++;
 
 		// Finally, we need to check that we have any units left to spawn, if not then stop the wave
 		if (wave.Count == 0)
@@ -53,7 +55,7 @@ public class WaveController : MonoBehaviour
 			WaveStarted = false;
 			WaveCount++;
 			// Reveal the start wave button
-		    uic.ToggleWaveButtonView();
+		    //uic.ToggleWaveButtonView();
 		}
 	}
 
@@ -75,11 +77,11 @@ public class WaveController : MonoBehaviour
 				yield return new WaitForSeconds(0.001f); // Just to make the RNG work a bit better
 			}
 		}
-
+        WaveObjSpawned = 0;
 		WaveStarted = true;
 		// Hide the start wave button
 		Debug.Log("Hiding button");
-		uic.ToggleWaveButtonView();
+		//uic.ToggleWaveButtonView();
 	}
 
 	public void StartWave ()
@@ -124,4 +126,14 @@ public class WaveController : MonoBehaviour
             spawned_objects = value;
         }
     }
+
+    public bool GameWaveStarted
+    {
+        get
+        {
+            return WaveStarted;
+        }
+    }
+
+
 }

@@ -11,12 +11,15 @@ https://unity3d.college/2017/10/08/simple-unity3d-snap-grid-system/
 public class Grid_Setup : MonoBehaviour
 {
     private WaveController wc;
-
-    private float size = 1f;
-    private List<MapTile> tiles = new List<MapTile>();
     private float x_start, y_start;
     GameController gc;
     private Map game_map;
+    public GameObject map_tile_a;
+    public GameObject map_tile_b;
+    public GameObject map_tile_c;
+    public GameObject map_prefab;
+
+    private float size = 1f;
 
     // Use this for initialization
     void Start()
@@ -29,8 +32,8 @@ public class Grid_Setup : MonoBehaviour
         y_start = 0;
         gc = GameController.instance;
         game_map = GetMapData();
-        gc.navPoints = GetNavPoints();
 
+        gc.navPoints = GetNavPoints();
         OnDraw(game_map);
     }
     
@@ -38,73 +41,84 @@ public class Grid_Setup : MonoBehaviour
     void Update() {
         foreach (Tower tower in game_map.Map_Towers)
         {
-            tower.Fire(wc.SpawnedObjects);
+            tower.Attack(wc.SpawnedObjects);
         }
     }
 
     //gets the path points that the AI will follow for the map
-    public GameObject[] GetNavPoints()
+    public List<GameObject[]> GetNavPoints()
     {
         string file_path = "Assets/Data/map_a_path.txt";
-        int array_size, x, y, i;
+        int array_size, x, y, i, j, NumPaths;
         GameObject[] NavPoints;
-        GameObject parent_nav_points = GameObject.Find("NavPoints");
-
+        List<GameObject[]> GlobalPaths = new List<GameObject[]>();
 
         /*
          * Note regarding file structure:
-         * First Line: Array Size
-         * 2nds - EOF: x, y, co-ordinates alternating
+         * First Line: Number of Paths present
+         * 2nd: Number of points in path
+         * 3rd - (3rd + 2nd line value * 2): x, y, co-ordinates alternating
+         * (looped depending on number of paths)
         */
 
         using (StreamReader sr = new StreamReader(file_path, true))
         {
-            array_size = Convert.ToInt32(sr.ReadLine());
-            //initializes the return array, with the size (based on text file line)
-            NavPoints = new GameObject[array_size];
-            BoxCollider2D boxcollider = gameObject.AddComponent<BoxCollider2D>();
-            boxcollider.isTrigger = true;
-            boxcollider.transform.localScale = new Vector2(0.01f, 0.01f);
-            
-            //assigns the first nav point a spawner script
-            //asssigns the 2nd - 2nd Last Navpoints a boxcollider2d component
-            //assigns the last navpoint nothing!
-            for (i = 0; i < array_size; i++)
+            NumPaths = Convert.ToInt32(sr.ReadLine());
+
+            for (j = 0; j < NumPaths; j++)
             {
-                GameObject temp_nav = new GameObject();
-                x = Convert.ToInt32(sr.ReadLine());
-                y = Convert.ToInt32(sr.ReadLine());
+                GameObject NavPoint = new GameObject();
 
+                array_size = Convert.ToInt32(sr.ReadLine());
+                //initializes the return array, with the size (based on text file line)
+                NavPoints = new GameObject[array_size];
+                BoxCollider2D boxcollider = gameObject.AddComponent<BoxCollider2D>();
+                boxcollider.isTrigger = true;
+                boxcollider.transform.localScale = new Vector2(0.01f, 0.01f);
 
-                if (x == 0)
+                //assigns the first nav point a spawner script
+                //asssigns the 2nd - 2nd Last Navpoints a boxcollider2d component
+                //assigns the last navpoint nothing!
+                for (i = 0; i < array_size; i++)
                 {
-                    temp_nav.AddComponent<Spawner>();
+                    GameObject temp_nav = new GameObject();
+                    x = Convert.ToInt32(sr.ReadLine());
+                    y = Convert.ToInt32(sr.ReadLine());
 
-                }
-                else
-                {
-                    if (i < (array_size - 1))
+
+                    if (x == 0)
                     {
-                        boxcollider = temp_nav.AddComponent<BoxCollider2D>();
-                        boxcollider.isTrigger = true;
+                        temp_nav.AddComponent<Spawner>();
+
+                    }
+                    else
+                    {
+                        if (i < (array_size - 1))
+                        {
+                            boxcollider = temp_nav.AddComponent<BoxCollider2D>();
+                            boxcollider.isTrigger = true;
+                        }
+
                     }
 
+                    //sets the positions (with the translation) for the navpoint
+                    temp_nav.transform.position = new Vector3(x + x_start, y + y_start, 0);
+                    temp_nav.transform.localScale = new Vector3(0.01f, 0.01f, 1);
+                    temp_nav.name = "NavPoint";
+
+                    //assigns the navpoints to NavPoints parents element
+                    temp_nav.transform.parent = NavPoint.transform;
+                    NavPoint.name = "NavPoints";
+                    //assigns the nav element to the ith position in the array 
+                    NavPoints[i] = temp_nav;
                 }
 
-                //sets the positions (with the translation) for the navpoint
-                temp_nav.transform.position = new Vector3(x + x_start, y + y_start, 0);
-                temp_nav.transform.localScale = new Vector3(0.01f, 0.01f, 1);
-                temp_nav.name = "NavPoint";
-
-                //assigns the navpoints to NavPoints parents element
-                temp_nav.transform.parent = parent_nav_points.transform;
-                //assigns the nav element to the ith position in the array 
-                NavPoints[i] = temp_nav;
+                GlobalPaths.Add(NavPoints);
             }
 
             //returns the array, which is assigned to an array inside the game controller 
             //(which the rest of the game then accesses)
-            return NavPoints;
+            return GlobalPaths;
         }
     }
     
@@ -164,7 +178,7 @@ public class Grid_Setup : MonoBehaviour
     //for a given mouse position, the closest grid point is found
     public Vector3 GetNearestPointOnGrid(Vector3 position)
     {
-        position -= transform.position;
+        position -= this.transform.position;
 
         int xCount = Mathf.RoundToInt(position.x / size);
         int yCount = Mathf.RoundToInt(position.y / size);
@@ -175,7 +189,7 @@ public class Grid_Setup : MonoBehaviour
             (float)yCount * size,
             (float)zCount * size);
 
-        result += transform.position;
+        result += this.transform.position;
 
         return result;
     }
@@ -183,33 +197,62 @@ public class Grid_Setup : MonoBehaviour
     //draws the game squares 
     void OnDraw(Map map)
     {
-        
+        System.Random rnd = new System.Random();
+
+        GameObject cube = null;
+        GameObject placement_tiles = new GameObject();
+        placement_tiles.name = "Placement Tiles";
+
         GameObject parent_path = GameObject.Find("Path");
 
         parent_path.transform.localScale = new Vector3(map.Width, map.Height, 1);
 
         foreach (MapTile tile in map.Map_Tiles)
         {
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.transform.position = tile.Position;
-            cube.GetComponent<Renderer>().sortingOrder = 1;
-            cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
+            int random = rnd.Next(0, 3);
 
             //draws differently colored squares depending on the enum value
             switch (tile.Type)
             {
                 case (TileType.empty):
-                   cube.GetComponent<Renderer>().material.color = Color.white;
+
+                    cube = Instantiate(map_prefab, tile.Position, Quaternion.identity);
+                    //cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    cube.transform.position = tile.Position;
+                    //cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
+                    cube.transform.position = new Vector3(cube.transform.position.x, cube.transform.position.y, 1);
+                    //cube.GetComponent<Renderer>().material.color = Color.grey;
+                    cube.transform.parent = placement_tiles.transform;
+                    cube.name = "PlacementTile";
                     break;
 
                 case (TileType.path):
-                    cube.GetComponent<Renderer>().material.color = Color.red;
+                    switch (random)
+                    {
+                        case 0:
+                            cube = Instantiate(map_tile_a, tile.Position, Quaternion.identity);
+                            break;
+
+                        case 1:
+                            cube = Instantiate(map_tile_b, tile.Position, Quaternion.identity);
+                            break;
+
+                        case 2:
+                            cube = Instantiate(map_tile_c, tile.Position, Quaternion.identity);
+                            break;
+                    }
+                    cube.transform.position = tile.Position;
+                    //cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
+                    cube.GetComponent<Renderer>().material.color = Color.white;
                     cube.transform.parent = parent_path.transform;
                     cube.name = "MapTile";
-
                     break;
 
                 case (TileType.terrain):
+                    cube = Instantiate(map_prefab, tile.Position, Quaternion.identity);
+
+                    cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
+
                     cube.GetComponent<Renderer>().material.color = Color.green;
                     cube.name = "TerrainTile";
                     break;
@@ -251,6 +294,11 @@ public class Grid_Setup : MonoBehaviour
         get
         {
             return game_map;
+        }
+
+        set
+        {
+            game_map = value;
         }
     }
 }
