@@ -11,11 +11,14 @@ public class TestsAim {
     public List<GameObject> enemy_objects;
     public GameObject enemy;
 
+    /*
+    Description: 
+    Tests that the default tower is able to correct select the right enemy, from a list of enemy, given its targetting method
+    */
     [Test]
     public void DefaultTowerAimTest()
     {
         //applicable for defender and scanner
-
         //test data
         enemy_objects = new List<GameObject>();
         enemy = new GameObject();
@@ -40,7 +43,10 @@ public class TestsAim {
         Assert.That(selected_enemy == enemy_objects[1]);
     }
 
-    //NEED TO FIX
+    /*
+    Description: 
+    Tests that the Isolator tower is able to correct select the right enemy, from a list of enemy, given its targetting method
+    */
     [Test]
     public void IsolatorTowerAimTest()
     {
@@ -100,16 +106,17 @@ public class TestsAim {
         //enemy1
         enemy.transform.position = new Vector3(2, 30, 0);
         enemy.AddComponent<AIController>();
-        enemy.GetComponent<AIController>().data = new DDoS();
-        
+        enemy.GetComponent<AIController>().data = new DDoS();        
         enemy_objects.Add(enemy);
         //enemy2
-        enemy.transform.position = new Vector3(12, 12, 0);
+        enemy.transform.position = new Vector3(12, 5, 0);
         enemy.GetComponent<AIController>().NavPointNum = 2;
-
+        enemy.GetComponent<AIController>().data = new DDoS();
         enemy_objects.Add(enemy);
         //enemy3
         enemy.transform.position = new Vector3(14, 5, 0);
+        enemy.GetComponent<AIController>().NavPointNum = 2;
+        enemy.GetComponent<AIController>().data = new DDoS();
         enemy_objects.Add(enemy);
 
         //list of enemies being tested
@@ -117,11 +124,18 @@ public class TestsAim {
         //need to set the nav points somehow 
         Vector3 tower_pos = new Vector3(15, 15, 0);
         Isolator test_tower = new Isolator(tower_pos);
-        
+
+        test_tower.gc = gc;
+
         test_tower.Target(enemy_objects);
-        Assert.That(test_tower.selected_unit == enemy_objects[3]);
+
+        Assert.That(test_tower.selected_unit == enemy_objects[2]);
     }
 
+    /*
+    Description: 
+    Tests that the Annihilator tower is able to correct select the right enemy, from a list of enemy, given its targetting method
+    */
     [Test]
     public void AnnihilatorTowerAimTest()
     {
@@ -150,19 +164,14 @@ public class TestsAim {
 
         Assert.That(test_tower.TargetedTowers.SequenceEqual(expected_towers));
     }
-
-    // A UnityTest behaves like a coroutine in PlayMode
-    // and allows you to yield null to skip a frame in EditMode
-    [UnityTest]
-    public IEnumerator TowerTestsWithEnumeratorPasses() {
-        // Use the Assert class to test conditions.
-        // yield to skip a frame
-        yield return null;
-    }
 }
 
 public class TestFire
 {
+    /*
+    Description: 
+    Tests that the scanner tower is able to fire at an object from outside it's range
+    */
     [Test]
     public void ScannerTestOutsideRange()
     {
@@ -176,7 +185,11 @@ public class TestFire
 
         Assert.That(!test_tower.Fire(enemy_list));
     }
-    
+
+    /*
+    Description: 
+    Test that the scanner tower IS able to select an enemy right on the border of its range
+    */
     [Test]
     public void ScannerTestOnRangeBoarder()
     {
@@ -191,6 +204,10 @@ public class TestFire
         Assert.That(test_tower.Fire(enemy_list));
     }
 
+    /*
+    Description: 
+    Test that the scanner tower IS able to select an enemy clearly within it's range
+    */
     [Test]
     public void ScannerTestClearlyInsideRange()
     {
@@ -205,6 +222,10 @@ public class TestFire
         Assert.That(test_tower.Fire(enemy_list));
     }
 
+    /*
+    Description: 
+    Test that the Defender tower ISN'T able to select an enemy outside it's range
+    */
     [Test]
     public void DefenderTestOutsideRange()
     {
@@ -219,6 +240,10 @@ public class TestFire
         Assert.That(!test_tower.Fire(enemy_list));
     }
 
+    /*
+    Description: 
+    Test that the Defender tower IS able to select an enemy on the border of its range
+    */
     [Test]
     public void DefenderTestOnRangeBoarder()
     {
@@ -233,6 +258,10 @@ public class TestFire
         Assert.That(test_tower.Fire(enemy_list));
     }
 
+    /*
+    Description: 
+    Test that the Defender tower IS able to select a enemy clearly inside its range
+    */
     [Test]
     public void DefenderTestClearlyInsideRange()
     {
@@ -247,7 +276,10 @@ public class TestFire
         Assert.That(test_tower.Fire(enemy_list));
     }
 
-    //only create line!
+    /*
+    Description: 
+    Test that an aimline (when created for attacking an enemy) has the correct start and end points
+    */
     [Test]
     public void TestAimLinePositions()
     {
@@ -274,6 +306,7 @@ public class TestFire
 public class TestTowerDataManipulation
 {
     //might not be able to test
+    //hence not present quite yet!
     [Test]
     public void TestSetTowerInactive()
     {
@@ -290,6 +323,10 @@ public class TestTowerDataManipulation
 
 public class TestTowerPlacement
 {
+    /*
+    Description: 
+    Checks that the grid conversion, from a given Vector3 input working correctly
+    */
     [Test]
     public void MousePointConversionToGrid()
     {
@@ -305,7 +342,10 @@ public class TestTowerPlacement
         Assert.That(actual_pos == expected_pos);
     }
 
-    //tower placement
+    /*
+    Description: 
+    Tests that the user CAN place a tower on a tile that is of empty type
+    */
     [Test]
     public void PlaceTowerOnBlank()
     {
@@ -343,6 +383,10 @@ public class TestTowerPlacement
         Assert.That(deploy_test_obj.GetComponent<Deploy>().TileEmpty(tile3.Position));
     }
 
+    /*
+    Description: 
+    Tests that the user is unable to place a tower on a tile with path type
+    */
     [Test]
     public void PlaceTowerOnPath()
     {
@@ -380,6 +424,10 @@ public class TestTowerPlacement
         Assert.That(!deploy_test_obj.GetComponent<Deploy>().TileEmpty(tile1.Position));
     }
 
+    /*
+    Description: 
+    Tests that the user is unable to place a tower on a tile with turret type
+    */
     [Test]
     public void PlaceTowerOnTurret()
     {
@@ -417,6 +465,10 @@ public class TestTowerPlacement
         Assert.That(!deploy_test_obj.GetComponent<Deploy>().TileEmpty(tile2.Position));
     }
 
+    /*
+    Description: 
+    Tests that the user is unable to place a tower on a tile with terrain type
+    */
     [Test]
     public void PlaceTowerOnTerrain()
     {
@@ -424,8 +476,7 @@ public class TestTowerPlacement
         temp_grid.AddComponent<Grid_Setup>();
 
         temp_grid.transform.position = new Vector3(0, 0, 0);
-
-
+        
         Map test_map = new Map(4, 2, 2);
 
         MapTile tile1 = new MapTile(new Vector3(0, 0, 0));

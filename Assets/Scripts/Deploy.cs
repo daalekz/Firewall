@@ -48,6 +48,7 @@ public class Deploy : MonoBehaviour
 
         grid = FindObjectOfType<Grid_Setup>();
 
+        //intialized the placeholder hover sphere
         hover_sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         hover_sphere.transform.localScale = new Vector3(0, 0, 0);
         hover_sphere.GetComponent<Renderer>().sortingOrder = 3;
@@ -63,21 +64,25 @@ public class Deploy : MonoBehaviour
 
     private void Update()
     {
+        //gets the mouse positioning in relation to the camera
         ray = cam.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hitInfo))
         {
+            //checks the Vector3 position from fields above
             var finalPosition = grid.GetNearestPointOnGrid(hitInfo.point);
             finalPosition.z = 0;
 
             //draws tower
             if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && !moving_tower)
             {
+                //checks if the tile has anything placed on it
                 if (TileEmpty(finalPosition)) {
+                    //if nothing is present on the tile, a new tower is placed on it
                     CreateTower(finalPosition);
                 }
             }
 
-            //selects a tower
+            //selects a tower, based on where mouse is
             if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl) && !moving_tower)
             {
                 SelectTower(finalPosition);
@@ -85,8 +90,11 @@ public class Deploy : MonoBehaviour
 
             if (selected_tower != null && moving_tower && Input.GetMouseButtonDown(0))
             {
+                //checks if there is anything currently on the tile
                 if (TileEmpty(finalPosition))
                 {
+                    //if there is nothing current on the intended place
+                    //tile is moved there
                     RepositionTower(finalPosition);
                 }
             }
@@ -124,6 +132,7 @@ public class Deploy : MonoBehaviour
         }
     }
 
+    //gets the selected build type from the menu
 	public void SetBuildType(int type)
 	{
 		build_type = (TowerType)type;
@@ -131,8 +140,8 @@ public class Deploy : MonoBehaviour
 	}
 
     /*
-     * Summary:
-     * Displays an overlay, to show user where a tower might be placed, given their current mouse position
+    Summary:
+    Displays an overlay, to show user where a tower might be placed, given their current mouse position
     */
     private void HoverPlacement(Vector3 InputPosition)
     {
@@ -178,6 +187,7 @@ public class Deploy : MonoBehaviour
         }
     }
 
+    //selects on of the towers currently present on the board
     public void SelectTower(Vector3 finalPosition)
     {
         //checks if the map towers list has been initalized
@@ -200,6 +210,8 @@ public class Deploy : MonoBehaviour
         }
     }
 
+
+    //checks if a tile (from a given input position) is blank
     public bool TileEmpty(Vector3 finalPosition)
     {
         //GameObject.CreatePrimitive(PrimitiveType.Cube).transform.position = finalPosition;
@@ -217,13 +229,12 @@ public class Deploy : MonoBehaviour
         return false;
     }
 
+    //creates a tower object, on the specificed location, of the selected tower type
     public void CreateTower(Vector3 finalPosition)
     {
         //GameObject.CreatePrimitive(PrimitiveType.Cube).transform.position = finalPosition;
         //sets the tile, to TileType.turrent, letting the game know that a turrent has been placed there
         DeployTools.Manage_Tile_Type(finalPosition, TileType.turret, grid.GameMap.Map_Tiles);
-
-        Debug.Log("Testing!");
 
         if (grid.GameMap.Map_Towers != null)
         {
@@ -255,6 +266,7 @@ public class Deploy : MonoBehaviour
         }   
     }
 
+    //moves a selected tower to a new specified location
     private void RepositionTower(Vector3 finalPosition)
     {
         finalPosition.z = 0;
@@ -308,6 +320,7 @@ public class Deploy : MonoBehaviour
         }
     }
 
+    //returns and sets the game current grid
     public Grid_Setup Grid
     {
         get
@@ -315,6 +328,7 @@ public class Deploy : MonoBehaviour
             return grid;
         }
 
+        //required for testing! (otherwise won't need to be present)
         set
         {
             grid = value;

@@ -6,7 +6,7 @@ using System;
 public class Annihilator : Tower {
     public List<GameObject> TargetedTowers;
     private bool select_vertical = false;
-    private List<GameObject> SelectedTowers;
+    private List<GameObject> SelectedTargets;
 
     public Annihilator(Vector3 position, bool selected_vertical) : base(position, TowerType.Annihilator)
     {
@@ -19,19 +19,18 @@ public class Annihilator : Tower {
         AimLine = new GameObject();
         AimLine.AddComponent<LineRenderer>();
         AimLine.name = "Tower Aim Line";
-
-        //aim_line.transform.parent = this.TowerObj.transform;
     }
 
+    //updates tower data, and then displays it on the game screen
     public override void Render()
     {
+        //initalizes the render_tower object if it doesn't exist yet!
         if (rendered_tower == null)
         {
             rendered_tower = TowerTools.Instantiate(deploy_instance.tower_annihilator, Position, Quaternion.identity);
             Color = rendered_tower.GetComponent<SpriteRenderer>().color;
 
             rendered_tower.transform.position = Position;
-            //rendered_tower.GetComponent<Renderer>().sortingOrder = 2;
             rendered_tower.transform.position = new Vector3
             (
                 rendered_tower.transform.position.x,
@@ -41,11 +40,11 @@ public class Annihilator : Tower {
             this.TowerObj.name = "Annihilator Tower";
         }
 
+        //initalizes the tower_gun object if it doesn't exist yet!
         if (tower_gun == null) { 
 
             tower_gun = TowerTools.Instantiate(deploy_instance.tower_annihilator_turret);
             tower_gun.transform.position = Position;
-            //rendered_tower.GetComponent<Renderer>().sortingOrder = 2;
             tower_gun.transform.position = new Vector3
             (
                 tower_gun.transform.position.x,
@@ -54,8 +53,10 @@ public class Annihilator : Tower {
             );
         }
 
+        //ensures that the tower is visible (hence changes z values to be seen on top of other objects)
         TowerObj.transform.position = new Vector3(Position.x, Position.y, -2);
         
+        //changes the displayed object color, to yellow, if it is selected
         if (Selected)
         {
             TowerObj.GetComponent<Renderer>().material.color = Color.yellow;
@@ -66,12 +67,18 @@ public class Annihilator : Tower {
         }
     }
 
+    /*
+    Summary:
+    This is the target method for the Annihilator Tower Type
+    Selected either all of the enemy for a given x or y value
+    */
     public List<GameObject> TargetRow(List<GameObject> enemy_queue)
     {
         TargetedTowers = new List<GameObject>();
         
         foreach (GameObject enemy in enemy_queue)
         {
+            //checks the orientation that the tower is allowed to shoot in
             if (select_vertical)
             {
                 if (enemy.transform.position.x == Position.x)
@@ -91,6 +98,8 @@ public class Annihilator : Tower {
         return TargetedTowers;
     }
 
+    //utilies shoot to check if there are any enemies in range
+    //if there are enemy within the tower's range shoots them (and set timers, to display line and wait, if shot is taken)
     public override bool Fire(List<GameObject> enemy_queue)
     {
         //local fields store the closest game object and the distance of the object from the turret
@@ -110,9 +119,9 @@ public class Annihilator : Tower {
 
         if (Shoot_Wait_Remaining <= 0f)
         {
-            SelectedTowers = TargetRow(enemy_queue);
+            SelectedTargets = TargetRow(enemy_queue);
 
-            if (SelectedTowers.Count > 0)
+            if (SelectedTargets.Count > 0)
             {
                 return true;
             }
@@ -125,13 +134,18 @@ public class Annihilator : Tower {
         return false;
     }
 
+    //applies damage to the enemys and destroy them (and all their associated data) if necessary
     public override void Attack(List<GameObject> enemy_queue)
     {
+        //checks if the object itself is active
         if (Fire(enemy_queue) && Active)
         {
-            foreach (GameObject enemy in SelectedTowers)
+            //the tower has returned true, that there are enemy that it can shoot, it loops through all of the enemys on the map
+            foreach (GameObject enemy in SelectedTargets)
             {
+                //applies damage to enemy
                 enemy.GetComponent<AIController>().data.ApplyDamage(Convert.ToInt32(Damage));
+                //destroys enemy if their health is below 0
                 if (enemy.GetComponent<AIController>().data.Health <= 0)
                 {
                     TowerTools.DestroyGameObj(enemy);

@@ -26,6 +26,7 @@ public abstract class Enemy
 		Health -= damage;
 	}
 
+    //return which nav path the enemy is taking
     public int PathNum
     {
         get

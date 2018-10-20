@@ -8,6 +8,7 @@ public class AIController : MonoBehaviour
 {
 	GameController gc;
 
+    //starts the enemy on the first Navpoint
 	int nodeIndex = 0;
 
 	public EnemyType Type;
@@ -17,6 +18,7 @@ public class AIController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+        //creates gets the programs global game controller object
 		gc = GameController.instance;
 
 		switch (Type)
