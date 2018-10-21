@@ -220,19 +220,23 @@ public class Deploy : MonoBehaviour
         //checks if the map towers list has been initalized
         if (grid.GameMap.Map_Towers != null)
         {
-            //checks if there is a pre-exisitng selected_towers tower
-            if (selected_tower == null)
+            MapTile temp_tile = DeployTools.SearchTiles(finalPosition, grid.GameMap.Map_Tiles);
+            if (temp_tile.Type == TileType.turret)
             {
-                //assigns selected_towers_tower and modifies object
-                selected_tower = DeployTools.SelectTower(grid.GameMap.Map_Towers, finalPosition);
+                //checks if there is a pre-exisitng selected_towers tower
+                if (selected_tower == null)
+                {
+                    //assigns selected_towers_tower and modifies object
+                    selected_tower = DeployTools.SelectTower(grid.GameMap.Map_Towers, finalPosition);
 
-                DeployTools.SelectTower(grid.GameMap.Map_Towers, finalPosition).Selected = true;
-            }
-            else
-            {
-                //removes existing selected_towers tower from variables and changes object data
-                DeployTools.GetTower(grid.GameMap.Map_Towers, selected_tower).Selected = false;
-                selected_tower = null;
+                    DeployTools.SelectTower(grid.GameMap.Map_Towers, finalPosition).Selected = true;
+                }
+                else
+                {
+                    //removes existing selected_towers tower from variables and changes object data
+                    DeployTools.GetTower(grid.GameMap.Map_Towers, selected_tower).Selected = false;
+                    selected_tower = null;
+                }
             }
         }
     }
@@ -265,8 +269,6 @@ public class Deploy : MonoBehaviour
 
         if (grid.GameMap.Map_Towers != null)
         {
-            Debug.Log(build_type);
-
             switch (build_type)
             {
                 case TowerType.Annihilator:

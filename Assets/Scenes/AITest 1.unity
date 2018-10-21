@@ -295,7 +295,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   WaveDisplay: {fileID: 1123542491}
-  HealthDisplay: {fileID: 0}
+  HealthDisplay: {fileID: 710421953}
 --- !u!4 &688192187
 Transform:
   m_ObjectHideFlags: 0
@@ -350,7 +350,7 @@ GameObject:
   - component: {fileID: 710421954}
   - component: {fileID: 710421953}
   m_Layer: 5
-  m_Name: Text
+  m_Name: HealthDisplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

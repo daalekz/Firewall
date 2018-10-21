@@ -31,9 +31,9 @@ public class Grid_Setup : MonoBehaviour
         x_start = 0;
         y_start = 0;
         gc = GameController.instance;
-        game_map = GetMapData("Assets/Data/map_a.txt");
+        game_map = GetMapData("Assets/Data/map_b.txt");
 
-        gc.navPoints = GetNavPoints("Assets/Data/map_a_path.txt");
+        gc.navPoints = GetNavPoints("Assets/Data/map_b_path.txt");
         OnDraw(game_map);
     }
     
