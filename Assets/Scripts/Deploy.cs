@@ -20,6 +20,7 @@ public class Deploy : MonoBehaviour
 
     private GameObject hover_sphere;
     private TowerType build_type;
+    private DeploymentStates selected_state;
 
     public GameObject tower_template;
     public GameObject tower_annihilator;
@@ -64,8 +65,33 @@ public class Deploy : MonoBehaviour
 
     private void Update()
     {
-        //gets the mouse positioning in relation to the camera
-        ray = cam.ScreenPointToRay(Input.mousePosition);
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && selected_state != DeploymentStates.move)
+        {
+            selected_state = DeploymentStates.add;
+        }
+
+        if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl) && selected_state != DeploymentStates.move)
+        {
+            selected_state = DeploymentStates.select;
+        }
+
+        if (selected_tower != null && Input.GetKey(KeyCode.M))
+        {
+            selected_state = DeploymentStates.move;
+        }
+
+        if (selected_state == DeploymentStates.move && Input.GetKey(KeyCode.C))
+        {
+            selected_state = DeploymentStates.reset;
+        }
+
+        if (Input.GetKey(KeyCode.Delete) && selected_state == DeploymentStates.select)
+        {
+            selected_state = DeploymentStates.delete;
+        }
+
+            //gets the mouse positioning in relation to the camera
+            ray = cam.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hitInfo))
         {
             //checks the Vector3 position from fields above
@@ -73,7 +99,7 @@ public class Deploy : MonoBehaviour
             finalPosition.z = 0;
 
             //draws tower
-            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && !moving_tower)
+            if (selected_state == DeploymentStates.add && Input.GetMouseButtonDown(0)) 
             {
                 //checks if the tile has anything placed on it
                 if (TileEmpty(finalPosition)) {
@@ -83,12 +109,12 @@ public class Deploy : MonoBehaviour
             }
 
             //selects a tower, based on where mouse is
-            if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl) && !moving_tower)
+            if (selected_state == DeploymentStates.select && Input.GetMouseButtonDown(0))
             {
                 SelectTower(finalPosition);
             }
 
-            if (selected_tower != null && moving_tower && Input.GetMouseButtonDown(0))
+            if (selected_state == DeploymentStates.move && Input.GetMouseButtonDown(0))
             {
                 //checks if there is anything currently on the tile
                 if (TileEmpty(finalPosition))
@@ -96,6 +122,7 @@ public class Deploy : MonoBehaviour
                     //if there is nothing current on the intended place
                     //tile is moved there
                     RepositionTower(finalPosition);
+                    selected_state = DeploymentStates.select;
                 }
             }
             //renders hover placement for a given tile
@@ -110,25 +137,25 @@ public class Deploy : MonoBehaviour
         RenderTowers();
 
         //initalize move of selected tower
-        if (selected_tower != null && Input.GetKey(KeyCode.M))
+        if (selected_tower != null && selected_state == DeploymentStates.move)
         {
             selected_tower.Active = false;
-            moving_tower = true;
         }
 
         //cancel moving of selected tower
-        if (moving_tower && Input.GetKey(KeyCode.C))
+        if (selected_state == DeploymentStates.reset)
         {
             selected_tower.Active = true;
-            moving_tower = false;
             selected_tower.Selected = false;
             selected_tower = null;
+            selected_state = DeploymentStates.select;
         }
 
         //deletes a selected_towers tile
-        if (Input.GetKey(KeyCode.Delete))
+        if (selected_state == DeploymentStates.delete)
         {
             RemoveSelectedTower();
+            selected_state = DeploymentStates.select;
         }
     }
 
@@ -286,7 +313,6 @@ public class Deploy : MonoBehaviour
 
             selected_tower.Selected = false;
             selected_tower = null;
-            moving_tower = false;
         }
     }
 

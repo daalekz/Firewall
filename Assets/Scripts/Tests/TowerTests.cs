@@ -295,10 +295,6 @@ public class TestFire
         Defender test_tower = new Defender(new Vector3(4, 28, 0));
 
         test_tower.Fire(enemy_list);
-
-        Debug.Log(test_tower.AimLine.GetComponent<LineRenderer>().GetPosition(1));
-        Debug.Log(enemy.transform.position);
-
         Assert.That(test_tower.AimLine.GetComponent<LineRenderer>().GetPosition(0) == test_tower.Position && test_tower.AimLine.GetComponent<LineRenderer>().GetPosition(1) == enemy.transform.position);
     }
 }

@@ -49,19 +49,7 @@ public class MapFileTests {
             output_map.Map_Tiles[10].Type == TileType.path
             &&
             output_map.Map_Tiles[11].Type == TileType.path
-            );
-
-        foreach (MapTile point in output_map.Map_Tiles)
-        {
-            Debug.Log(point.Position.x + " | " + point.Position.y);
-        }
-
-        Debug.Log("navpoints:");
-
-        foreach (GameObject point in output_points[0])
-        {
-            Debug.Log(point.transform.position.x + " | " + point.transform.position.y);
-        }
+        );
     }
 
     /*
