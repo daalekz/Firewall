@@ -181,6 +181,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0856b6ff93b74834da9d88fe26e5255c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  map_tile_a: {fileID: 0}
+  map_tile_b: {fileID: 0}
+  map_tile_c: {fileID: 0}
+  map_prefab: {fileID: 0}
 --- !u!1 &447008431
 GameObject:
   m_ObjectHideFlags: 0
@@ -284,6 +288,81 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &523859462
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 523859463}
+  - component: {fileID: 523859465}
+  - component: {fileID: 523859464}
+  m_Layer: 5
+  m_Name: GameOver
+  m_TagString: GameOver
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &523859463
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 523859462}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1730828689}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 160, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &523859464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 523859462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.8301887, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 298
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 300
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
+    m_LineSpacing: 1
+  m_Text: GAME OVER
+--- !u!222 &523859465
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 523859462}
+  m_CullTransparentMesh: 0
 --- !u!1 &688192185
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,6 +424,7 @@ MonoBehaviour:
   - {fileID: 1473108543255732, guid: ec8d2dba35ba3b941a4edb0bc050cd22, type: 2}
   WaveCount: 1
   SpawnDelay: 1
+  WaveObjSpawned: 0
 --- !u!114 &688192189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -461,6 +541,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 434110599}
   cam: {fileID: 1516174764}
+  tower_template: {fileID: 0}
+  tower_annihilator: {fileID: 0}
+  tower_annihilator_turret: {fileID: 0}
+  tower_defender: {fileID: 0}
+  tower_defender_turret: {fileID: 0}
+  tower_extractor: {fileID: 0}
+  tower_extractor_turret: {fileID: 0}
+  tower_isolator: {fileID: 0}
+  tower_isolator_turret: {fileID: 0}
+  tower_scanner: {fileID: 0}
+  tower_scanner_tower: {fileID: 0}
 --- !u!4 &1026316179
 Transform:
   m_ObjectHideFlags: 0
@@ -1421,7 +1512,7 @@ RectTransform:
   - {fileID: 941133124}
   - {fileID: 1090821236}
   m_Father: {fileID: 1730828689}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1461,4 +1552,4 @@ CanvasRenderer:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1940776894}
-m_CullTransparentMesh: 0
+  m_CullTransparentMesh: 0
