@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour
     private List<GameObject[]> navPointsArray = new List<GameObject[]>();
     // Array of empty game objects used as nodes to navigate between || FIX
     private GameObject GameOverText;
+    private GameObject HealthText;
 
 
 	void Start ()
@@ -57,7 +58,7 @@ public class GameController : MonoBehaviour
         
         if (PlayerBoi != null)
         {
-            //HealthDisplay.text = "Health: " + PlayerBoi.Health.ToString();
+            HealthDisplay.text = "Health: " + PlayerBoi.Health.ToString();
         }
     }
 

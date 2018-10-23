@@ -114,6 +114,8 @@ public class WaveController : MonoBehaviour
 		StartCoroutine(GenerateWave(limit));
 	}
 
+
+    //Property links to internal field that contains all of the enemies that have currently swapned and are visible within the game
     public List<GameObject> SpawnedObjects
     {
         get
@@ -127,6 +129,7 @@ public class WaveController : MonoBehaviour
         }
     }
 
+    //return if a Given wave has started
     public bool GameWaveStarted
     {
         get

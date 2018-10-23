@@ -20,6 +20,7 @@ public class Deploy : MonoBehaviour
 
     private GameObject hover_sphere;
     private TowerType build_type;
+    private DeploymentStates selected_state;
 
     public GameObject tower_template;
     public GameObject tower_annihilator;
@@ -48,6 +49,7 @@ public class Deploy : MonoBehaviour
 
         grid = FindObjectOfType<Grid_Setup>();
 
+        //intialized the placeholder hover sphere
         hover_sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         hover_sphere.transform.localScale = new Vector3(0, 0, 0);
         hover_sphere.GetComponent<Renderer>().sortingOrder = 3;
@@ -63,31 +65,64 @@ public class Deploy : MonoBehaviour
 
     private void Update()
     {
-        ray = cam.ScreenPointToRay(Input.mousePosition);
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && selected_state != DeploymentStates.move)
+        {
+            selected_state = DeploymentStates.add;
+        }
+
+        if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl) && selected_state != DeploymentStates.move)
+        {
+            selected_state = DeploymentStates.select;
+        }
+
+        if (selected_tower != null && Input.GetKey(KeyCode.M))
+        {
+            selected_state = DeploymentStates.move;
+        }
+
+        if (selected_state == DeploymentStates.move && Input.GetKey(KeyCode.C))
+        {
+            selected_state = DeploymentStates.reset;
+        }
+
+        if (Input.GetKey(KeyCode.Delete) && selected_state == DeploymentStates.select)
+        {
+            selected_state = DeploymentStates.delete;
+        }
+
+            //gets the mouse positioning in relation to the camera
+            ray = cam.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hitInfo))
         {
+            //checks the Vector3 position from fields above
             var finalPosition = grid.GetNearestPointOnGrid(hitInfo.point);
             finalPosition.z = 0;
 
             //draws tower
-            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && !moving_tower)
+            if (selected_state == DeploymentStates.add && Input.GetMouseButtonDown(0)) 
             {
+                //checks if the tile has anything placed on it
                 if (TileEmpty(finalPosition)) {
+                    //if nothing is present on the tile, a new tower is placed on it
                     CreateTower(finalPosition);
                 }
             }
 
-            //selects a tower
-            if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl) && !moving_tower)
+            //selects a tower, based on where mouse is
+            if (selected_state == DeploymentStates.select && Input.GetMouseButtonDown(0))
             {
                 SelectTower(finalPosition);
             }
 
-            if (selected_tower != null && moving_tower && Input.GetMouseButtonDown(0))
+            if (selected_state == DeploymentStates.move && Input.GetMouseButtonDown(0))
             {
+                //checks if there is anything currently on the tile
                 if (TileEmpty(finalPosition))
                 {
+                    //if there is nothing current on the intended place
+                    //tile is moved there
                     RepositionTower(finalPosition);
+                    selected_state = DeploymentStates.select;
                 }
             }
             //renders hover placement for a given tile
@@ -102,28 +137,29 @@ public class Deploy : MonoBehaviour
         RenderTowers();
 
         //initalize move of selected tower
-        if (selected_tower != null && Input.GetKey(KeyCode.M))
+        if (selected_tower != null && selected_state == DeploymentStates.move)
         {
             selected_tower.Active = false;
-            moving_tower = true;
         }
 
         //cancel moving of selected tower
-        if (moving_tower && Input.GetKey(KeyCode.C))
+        if (selected_state == DeploymentStates.reset)
         {
             selected_tower.Active = true;
-            moving_tower = false;
             selected_tower.Selected = false;
             selected_tower = null;
+            selected_state = DeploymentStates.select;
         }
 
         //deletes a selected_towers tile
-        if (Input.GetKey(KeyCode.Delete))
+        if (selected_state == DeploymentStates.delete)
         {
             RemoveSelectedTower();
+            selected_state = DeploymentStates.select;
         }
     }
 
+    //gets the selected build type from the menu
 	public void SetBuildType(int type)
 	{
 		build_type = (TowerType)type;
@@ -131,8 +167,8 @@ public class Deploy : MonoBehaviour
 	}
 
     /*
-     * Summary:
-     * Displays an overlay, to show user where a tower might be placed, given their current mouse position
+    Summary:
+    Displays an overlay, to show user where a tower might be placed, given their current mouse position
     */
     private void HoverPlacement(Vector3 InputPosition)
     {
@@ -178,28 +214,35 @@ public class Deploy : MonoBehaviour
         }
     }
 
+    //selects on of the towers currently present on the board
     public void SelectTower(Vector3 finalPosition)
     {
         //checks if the map towers list has been initalized
         if (grid.GameMap.Map_Towers != null)
         {
-            //checks if there is a pre-exisitng selected_towers tower
-            if (selected_tower == null)
+            MapTile temp_tile = DeployTools.SearchTiles(finalPosition, grid.GameMap.Map_Tiles);
+            if (temp_tile.Type == TileType.turret)
             {
-                //assigns selected_towers_tower and modifies object
-                selected_tower = DeployTools.SelectTower(grid.GameMap.Map_Towers, finalPosition);
+                //checks if there is a pre-exisitng selected_towers tower
+                if (selected_tower == null)
+                {
+                    //assigns selected_towers_tower and modifies object
+                    selected_tower = DeployTools.SelectTower(grid.GameMap.Map_Towers, finalPosition);
 
-                DeployTools.SelectTower(grid.GameMap.Map_Towers, finalPosition).Selected = true;
-            }
-            else
-            {
-                //removes existing selected_towers tower from variables and changes object data
-                DeployTools.GetTower(grid.GameMap.Map_Towers, selected_tower).Selected = false;
-                selected_tower = null;
+                    DeployTools.SelectTower(grid.GameMap.Map_Towers, finalPosition).Selected = true;
+                }
+                else
+                {
+                    //removes existing selected_towers tower from variables and changes object data
+                    DeployTools.GetTower(grid.GameMap.Map_Towers, selected_tower).Selected = false;
+                    selected_tower = null;
+                }
             }
         }
     }
 
+
+    //checks if a tile (from a given input position) is blank
     public bool TileEmpty(Vector3 finalPosition)
     {
         //GameObject.CreatePrimitive(PrimitiveType.Cube).transform.position = finalPosition;
@@ -217,18 +260,15 @@ public class Deploy : MonoBehaviour
         return false;
     }
 
+    //creates a tower object, on the specificed location, of the selected tower type
     public void CreateTower(Vector3 finalPosition)
     {
         //GameObject.CreatePrimitive(PrimitiveType.Cube).transform.position = finalPosition;
         //sets the tile, to TileType.turrent, letting the game know that a turrent has been placed there
         DeployTools.Manage_Tile_Type(finalPosition, TileType.turret, grid.GameMap.Map_Tiles);
 
-        Debug.Log("Testing!");
-
         if (grid.GameMap.Map_Towers != null)
         {
-            Debug.Log(build_type);
-
             switch (build_type)
             {
                 case TowerType.Annihilator:
@@ -255,6 +295,7 @@ public class Deploy : MonoBehaviour
         }   
     }
 
+    //moves a selected tower to a new specified location
     private void RepositionTower(Vector3 finalPosition)
     {
         finalPosition.z = 0;
@@ -274,7 +315,6 @@ public class Deploy : MonoBehaviour
 
             selected_tower.Selected = false;
             selected_tower = null;
-            moving_tower = false;
         }
     }
 
@@ -308,6 +348,7 @@ public class Deploy : MonoBehaviour
         }
     }
 
+    //returns and sets the game current grid
     public Grid_Setup Grid
     {
         get
@@ -315,6 +356,7 @@ public class Deploy : MonoBehaviour
             return grid;
         }
 
+        //required for testing! (otherwise won't need to be present)
         set
         {
             grid = value;
