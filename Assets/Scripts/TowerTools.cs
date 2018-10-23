@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TowerTools : MonoBehaviour {
+public class TowerTools : MonoBehaviour
+{
     public static void DestroyGameObj(GameObject obj)
     {
         //due to some of the class being unable to inherit monobehaviour
