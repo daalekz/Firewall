@@ -366,6 +366,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75361e7f073b94249b80aca4e885b0d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hover_tower: {fileID: 0}
+  hover_gun: {fileID: 0}
   grid: {fileID: 434110599}
   cam: {fileID: 1516174764}
   tower_template: {fileID: 0}
@@ -387,8 +389,7 @@ MonoBehaviour:
     type: 2}
   tower_scanner: {fileID: 1303365040213968, guid: 5e0fceef44c6d07488f16636df01e7a6,
     type: 2}
-  tower_scanner_tower: {fileID: 1660860384040452, guid: 06de3932db0b5b94590cbadf61fb2d7f,
-    type: 2}
+  tower_scanner_turret: {fileID: 0}
 --- !u!4 &1026316179
 Transform:
   m_ObjectHideFlags: 0

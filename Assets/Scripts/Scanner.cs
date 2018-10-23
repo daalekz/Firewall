@@ -46,7 +46,7 @@ public class Scanner : Tower
 
         if (tower_gun == null)
         {
-            tower_gun = TowerTools.Instantiate(deploy_instance.tower_scanner_tower);
+            tower_gun = TowerTools.Instantiate(deploy_instance.tower_scanner_turret);
             tower_gun.transform.position = Position;
             //rendered_tower.GetComponent<Renderer>().sortingOrder = 2;
             tower_gun.transform.position = new Vector3
