@@ -78,15 +78,34 @@ public class AIController : MonoBehaviour
     // Handle changing the AI's direction when it hits a corner
 	void ChangeDirection ()
 	{
-        if (gc.navPoints[data.PathNum][nodeIndex + 1].transform.position.x == transform.position.x  || gc.navPoints[data.PathNum][nodeIndex + 1].transform.position.y == transform.position.y)
+        if (gc.navPoints.Count < 2)
         {
             nodeIndex++; // Change the node we will now move towards
 
-            direction = gc.navPoints[data.PathNum][nodeIndex].transform.position - transform.position;
-
-            Debug.Log(gc.navPoints[data.PathNum][nodeIndex].transform.position + "|" + transform.position + "|" + direction);
-
+            direction = gc.navPoints[data.PathNum][nodeIndex + 1].transform.position - transform.position;
             direction = direction / direction.magnitude;
+        }
+        else
+        {
+
+            if (nodeIndex < (gc.navPoints[data.PathNum].Length - 1))
+            {
+
+                if (gc.navPoints[data.PathNum][nodeIndex + 1].transform.position.x == transform.position.x || gc.navPoints[data.PathNum][nodeIndex + 1].transform.position.y == transform.position.y)
+                {
+                    nodeIndex++; // Change the node we will now move towards
+
+                    direction = gc.navPoints[data.PathNum][nodeIndex].transform.position - transform.position;
+
+                    direction = direction / direction.magnitude;
+                }
+            }
+            else
+            {
+                direction = gc.navPoints[data.PathNum][nodeIndex].transform.position - transform.position;
+
+                direction = direction / direction.magnitude;
+            }
         }
 	}
 

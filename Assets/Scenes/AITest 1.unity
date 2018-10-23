@@ -181,6 +181,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0856b6ff93b74834da9d88fe26e5255c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  map_tile_a: {fileID: 1001206787141414, guid: 5f297a744ead94f489dd91b45e53fd25, type: 2}
+  map_tile_b: {fileID: 1001206787141414, guid: 2ba90286dbb90624986b6558a244d257, type: 2}
+  map_tile_c: {fileID: 1001206787141414, guid: 30cc1e69570a23f489a81d4bf303090d, type: 2}
+  map_prefab: {fileID: 1806254190466008, guid: 2054e1391dd59ac458ffd38b01fbeda9, type: 2}
 --- !u!1 &447008431
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,6 +349,7 @@ MonoBehaviour:
   - {fileID: 1473108543255732, guid: ec8d2dba35ba3b941a4edb0bc050cd22, type: 2}
   WaveCount: 1
   SpawnDelay: 1
+  WaveObjSpawned: 0
 --- !u!114 &688192189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -461,6 +466,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 434110599}
   cam: {fileID: 1516174764}
+  tower_template: {fileID: 0}
+  tower_annihilator: {fileID: 1027952722242080, guid: 185183eca0c74b840a827ddc25e355be,
+    type: 2}
+  tower_annihilator_turret: {fileID: 1120839856292196, guid: cab669cc8bfc8f94ba58dc95d93e3c67,
+    type: 2}
+  tower_defender: {fileID: 1303365040213968, guid: 7e0be3d9b4d6a1e4dab32e3b6c878123,
+    type: 2}
+  tower_defender_turret: {fileID: 1190222241849564, guid: 1b185481e8120bc429e774f408e8abcf,
+    type: 2}
+  tower_extractor: {fileID: 1303365040213968, guid: 1892f6ef849c267409952f02161bf484,
+    type: 2}
+  tower_extractor_turret: {fileID: 1918511568854310, guid: 23a0bb5d4a415e347a92a8b47ba933cf,
+    type: 2}
+  tower_isolator: {fileID: 1303365040213968, guid: 9382bc603f3de614ba8371834803b821,
+    type: 2}
+  tower_isolator_turret: {fileID: 1303365040213968, guid: 711822e10d69fdc4c993c67b7e10836b,
+    type: 2}
+  tower_scanner: {fileID: 1303365040213968, guid: 5e0fceef44c6d07488f16636df01e7a6,
+    type: 2}
+  tower_scanner_tower: {fileID: 1660860384040452, guid: 06de3932db0b5b94590cbadf61fb2d7f,
+    type: 2}
 --- !u!4 &1026316179
 Transform:
   m_ObjectHideFlags: 0
@@ -1461,4 +1487,4 @@ CanvasRenderer:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1940776894}
-m_CullTransparentMesh: 0
+  m_CullTransparentMesh: 0

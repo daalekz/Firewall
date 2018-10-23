@@ -7,7 +7,9 @@ public class Isolator : Tower
 {
     private List<GameObject[]> navPoints = null;
     private int NavPathNum;
-    private int HighNavPoint = 0;
+    private int NumNavPointsFromEnd;
+    private int HighNavPoint;
+
 
     public Isolator(Vector3 position) : base(position, TowerType.Isolator)
     {
@@ -79,39 +81,56 @@ public class Isolator : Tower
     public override void Target(List<GameObject> enemy_queue)
     {
         navPoints = gc.navPoints;
+        int CurrentNavPoint;
+        int EnemyPointsFromEnd = 0;
+        float DistanceFromCurrentPoint;
 
         //goes through all of the enemy currently present on the board
         foreach (GameObject enemy in enemy_queue)
         {
+            NavPathNum = enemy.GetComponent<AIController>().AIPathNum;
+            CurrentNavPoint = enemy.GetComponent<AIController>().NavPointNum;
+            EnemyPointsFromEnd = navPoints[NavPathNum].Length - CurrentNavPoint;
+
+            DistanceFromCurrentPoint = Vector3.Distance(enemy.transform.position, navPoints[NavPathNum][CurrentNavPoint].transform.position);
+
             if (enemy_queue[0] == enemy)
             {
                 AimLine.GetComponent<LineRenderer>().SetPosition(1, Position);
                 AimLine.GetComponent<LineRenderer>().SetPosition(0, Position);
                 selected_unit = enemy;
-                NavPathNum = enemy.GetComponent<AIController>().AIPathNum;
-                
-                HighNavPoint = enemy.GetComponent<AIController>().NavPointNum;
-                closest_distance = Vector3.Distance(enemy.transform.position, navPoints[NavPathNum][HighNavPoint + 1].transform.position);
 
+                NumNavPointsFromEnd = EnemyPointsFromEnd;
+
+                closest_distance = DistanceFromCurrentPoint;
+                HighNavPoint = CurrentNavPoint;
             }
             else
             {
-                NavPathNum = enemy.GetComponent<AIController>().AIPathNum;
+                    if (EnemyPointsFromEnd == NumNavPointsFromEnd)
+                    {
+                        if (DistanceFromCurrentPoint > closest_distance)
+                        {
+                            closest_distance = DistanceFromCurrentPoint;
+                            selected_unit = enemy;
+                            HighNavPoint = CurrentNavPoint;
+                        }
+                    }
 
-                if (enemy.GetComponent<AIController>().NavPointNum > HighNavPoint)
-                {
-                    selected_unit = enemy;
-                    HighNavPoint = enemy.GetComponent<AIController>().NavPointNum;
-                    closest_distance = Vector3.Distance(enemy.transform.position, navPoints[NavPathNum][HighNavPoint + 1].transform.position);
+                    if (EnemyPointsFromEnd < NumNavPointsFromEnd)
+                    {
+                        closest_distance = DistanceFromCurrentPoint;
+                        selected_unit = enemy;
+                        NumNavPointsFromEnd = EnemyPointsFromEnd;
+                        HighNavPoint = CurrentNavPoint;
+                    }
                 }
-                else if (enemy.GetComponent<AIController>().NavPointNum == HighNavPoint && Vector3.Distance(enemy.transform.position, navPoints[NavPathNum][HighNavPoint + 1].transform.position) < closest_distance)
-                {
-                    selected_unit = enemy;
-                    closest_distance = Vector3.Distance(enemy.transform.position, navPoints[NavPathNum][HighNavPoint + 1].transform.position);
-                }
+
             }
-        }
+
+        Debug.Log("SELECTED: " + EnemyPointsFromEnd + " | " + closest_distance);
     }
+
 
     //utilies shoot to check if there are any enemies in range
     //if there are enemy within the tower's range shoots them (and set timers, to display line and wait, if shot is taken)
