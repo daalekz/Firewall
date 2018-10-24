@@ -384,7 +384,9 @@ MonoBehaviour:
     type: 2}
   tower_scanner: {fileID: 1303365040213968, guid: 5e0fceef44c6d07488f16636df01e7a6,
     type: 2}
-  tower_scanner_turret: {fileID: 0}
+  tower_scanner_turret: {fileID: 1660860384040452, guid: 06de3932db0b5b94590cbadf61fb2d7f,
+    type: 2}
+  radius_line: {fileID: 0}
 --- !u!4 &1026316179
 Transform:
   m_ObjectHideFlags: 0

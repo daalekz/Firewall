@@ -6,35 +6,35 @@ using System;
 
 public class AIController : MonoBehaviour
 {
-	GameController gc;
+    GameController gc;
 
     //starts the enemy on the first Navpoint
-	int nodeIndex = 0;
+    int nodeIndex = 0;
 
-	public EnemyType Type;
-	public Enemy data;
-	private Vector3 direction;
+    public EnemyType Type;
+    public Enemy data;
+    private Vector3 direction;
 
-	// Use this for initialization
-	void Start ()
-	{
+    // Use this for initialization
+    void Start()
+    {
         //creates gets the programs global game controller object
-		gc = GameController.instance;
+        gc = GameController.instance;
 
-		switch (Type)
-		{
-			case EnemyType.DDoS:
-			    data = new DDoS();
-				break;
-			
-			case EnemyType.Worm:
-			    data = new Worm();
-				break;
+        switch (Type)
+        {
+            case EnemyType.DDoS:
+                data = new DDoS();
+                break;
 
-			case EnemyType.Spyware:
-			    data = new Spyware();
-				break;
-		}
+            case EnemyType.Worm:
+                data = new Worm();
+                break;
+
+            case EnemyType.Spyware:
+                data = new Spyware();
+                break;
+        }
 
         System.Random rnd = new System.Random();
         data.PathNum = rnd.Next(0, gc.navPoints.Count);
@@ -43,12 +43,12 @@ public class AIController : MonoBehaviour
         // Set the initial direction the AI will move in
         direction = gc.navPoints[data.PathNum][1].transform.position - gc.navPoints[data.PathNum][0].transform.position;
         direction = direction / direction.magnitude;
-        
+
     }
 
     // Update is called once per frame
-    void Update ()
-	{
+    void Update()
+    {
         if (data != null)
         {
             // Move the AI towards the current node
@@ -56,10 +56,10 @@ public class AIController : MonoBehaviour
             //specifies z (so that it is rendered ontop)
             transform.position = new Vector3(transform.position.x, transform.position.y, -1);
         }
-	}
+    }
 
-	void OnTriggerEnter2D (Collider2D col)
-	{
+    void OnTriggerEnter2D(Collider2D col)
+    {
         // Check if we have hit the end of the path
         if (col.tag == "Finish")
         {
@@ -73,22 +73,41 @@ public class AIController : MonoBehaviour
             transform.position = col.transform.position;
             ChangeDirection();
         }
-	}
+    }
 
     // Handle changing the AI's direction when it hits a corner
-	void ChangeDirection ()
-	{
-        if (gc.navPoints[data.PathNum][nodeIndex + 1].transform.position.x == transform.position.x  || gc.navPoints[data.PathNum][nodeIndex + 1].transform.position.y == transform.position.y)
+    void ChangeDirection()
+    {
+        if (gc.navPoints.Count < 2)
         {
             nodeIndex++; // Change the node we will now move towards
 
-            direction = gc.navPoints[data.PathNum][nodeIndex].transform.position - transform.position;
-
-            Debug.Log(gc.navPoints[data.PathNum][nodeIndex].transform.position + "|" + transform.position + "|" + direction);
-
+            direction = gc.navPoints[data.PathNum][nodeIndex + 1].transform.position - transform.position;
             direction = direction / direction.magnitude;
         }
-	}
+        else
+        {
+
+            if (nodeIndex < (gc.navPoints[data.PathNum].Length - 1))
+            {
+
+                if (gc.navPoints[data.PathNum][nodeIndex + 1].transform.position.x == transform.position.x || gc.navPoints[data.PathNum][nodeIndex + 1].transform.position.y == transform.position.y)
+                {
+                    nodeIndex++; // Change the node we will now move towards
+
+                    direction = gc.navPoints[data.PathNum][nodeIndex].transform.position - transform.position;
+
+                    direction = direction / direction.magnitude;
+                }
+            }
+            else
+            {
+                direction = gc.navPoints[data.PathNum][nodeIndex].transform.position - transform.position;
+
+                direction = direction / direction.magnitude;
+            }
+        }
+    }
 
     public int NavPointNum
     {

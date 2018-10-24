@@ -36,9 +36,10 @@ public class Grid_Setup : MonoBehaviour
         gc.navPoints = GetNavPoints("Assets/Data/map_b_path.txt");
         OnDraw(game_map);
     }
-    
+
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         foreach (Tower tower in game_map.Map_Towers)
         {
             tower.Attack(wc.SpawnedObjects);
@@ -51,6 +52,10 @@ public class Grid_Setup : MonoBehaviour
         int array_size, x, y, i, j, NumPaths;
         GameObject[] NavPoints;
         List<GameObject[]> GlobalPaths = new List<GameObject[]>();
+        GameObject global_spawner;
+
+        global_spawner = new GameObject();
+        global_spawner.AddComponent<Spawner>();
 
         /*
          * Note regarding file structure:
@@ -85,11 +90,7 @@ public class Grid_Setup : MonoBehaviour
                     y = Convert.ToInt32(sr.ReadLine());
 
 
-                    if (x == 0)
-                    {
-                        temp_nav.AddComponent<Spawner>();
-                    }
-                    else
+                    if (x != 0)
                     {
                         if (i < (array_size - 1))
                         {
@@ -107,7 +108,19 @@ public class Grid_Setup : MonoBehaviour
                     temp_nav.transform.parent = NavPoint.transform;
                     NavPoint.name = "NavPoints";
                     //assigns the nav element to the ith position in the array 
-                    NavPoints[i] = temp_nav;
+                    if (x == 0)
+                    {
+                        global_spawner.transform.position = new Vector3(x + x_start, y + y_start + 1, 0);
+                        global_spawner.transform.localScale = new Vector3(0.01f, 0.01f, 1);
+                        global_spawner.name = "SpawnPoint";
+
+                        //assigns the navpoints to NavPoints parents element
+                        NavPoints[i] = global_spawner;
+                    }
+                    else
+                    {
+                        NavPoints[i] = temp_nav;
+                    }
                 }
 
                 GlobalPaths.Add(NavPoints);
@@ -118,8 +131,8 @@ public class Grid_Setup : MonoBehaviour
             return GlobalPaths;
         }
     }
-    
-   //reads through a data file to create the game map
+
+    //reads through a data file to create the game map
     public Map GetMapData(string file_path)
     {
         int num_cells, width, height;
@@ -176,7 +189,7 @@ public class Grid_Setup : MonoBehaviour
             return method_map;
         }
     }
-    
+
     //for a given mouse position, the closest grid point is found
     public Vector3 GetNearestPointOnGrid(Vector3 position)
     {
@@ -218,7 +231,6 @@ public class Grid_Setup : MonoBehaviour
             switch (tile.Type)
             {
                 case (TileType.empty):
-
                     cube = Instantiate(map_prefab, tile.Position, Quaternion.identity);
                     //cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     cube.transform.position = tile.Position;

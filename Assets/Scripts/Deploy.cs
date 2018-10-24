@@ -41,6 +41,8 @@ public class Deploy : MonoBehaviour
     public GameObject tower_scanner;
     public GameObject tower_scanner_turret;
 
+    public GameObject radius_line;
+
     public RaycastHit hitInfo;
     public Ray ray;
 
@@ -59,6 +61,9 @@ public class Deploy : MonoBehaviour
     void Start ()
     {
         igmc = InGameMenuController.instance;
+        radius_line = new GameObject();
+        radius_line.AddComponent<LineRenderer>();
+        radius_line.name = "Hover Radius Display";
     }
 
     private void Update()
@@ -204,6 +209,7 @@ public class Deploy : MonoBehaviour
             //check that the tile is a of tiletype empty
             //if tile type isn't type empty, a tower won't be able to be placed there
             case TileType.empty:
+                radius_line.SetActive(true);
                 //makes the hover_sphere game object visible
                 hover_tower.SetActive(true);
                 hover_gun.SetActive(true);
@@ -218,11 +224,15 @@ public class Deploy : MonoBehaviour
                 hover_gun.transform.position = new Vector3(hover_gun.transform.position.x, hover_gun.transform.position.y, -2);
                 hover_gun.GetComponent<Renderer>().material.color = Color.white;
 
+                DrawRadius(radius_line, build_type, InputPosition);
+
                 break;
 
             case TileType.turret:
                 hover_tower.SetActive(false);
                 hover_gun.SetActive(false);
+                hover_gun.GetComponent<SpriteRenderer>().color = Color.red;
+
                 break;
 
             default:
@@ -241,6 +251,7 @@ public class Deploy : MonoBehaviour
                 hover_gun.transform.position = new Vector3(hover_gun.transform.position.x, hover_gun.transform.position.y, -2);
                 hover_gun.GetComponent<SpriteRenderer>().material.color = Color.red;
                 hover_gun.GetComponent<SpriteRenderer>().color = Color.red;
+                radius_line.SetActive(false);
 
                 break;
         }
@@ -382,6 +393,57 @@ public class Deploy : MonoBehaviour
         set
         {
             grid = value;
+        }
+    }
+
+
+    public void DrawRadius(GameObject Line, TowerType CurrentTowerType, Vector3 position)
+    {
+        float ThetaScale = 0.01f;
+        float radius = 0;
+        int Size;
+        float Theta = 0f;
+        LineRenderer LineDrawer;
+
+        switch (CurrentTowerType)
+        {
+            case TowerType.Annihilator:
+                radius = 0;
+                break;
+
+            case TowerType.Defender:
+                radius = 6;
+                break;
+
+            case TowerType.Extractor:
+                break;
+
+            case TowerType.Isolator:
+                radius = 0;
+                break;
+
+            case TowerType.Scanner:
+                radius = 3;
+                break;
+
+            default:
+                radius = 0;
+                break;
+        }
+
+        LineDrawer = Line.GetComponent<LineRenderer>();
+
+
+        Theta = 0f;
+        Size = (int)((1f / ThetaScale) + 1f);
+        LineDrawer.SetVertexCount(Size);
+        for (int i = 0; i < Size; i++)
+        {
+            Theta += (2.0f * Mathf.PI * ThetaScale);
+            float x = radius * Mathf.Cos(Theta) + position.x;
+            float y = radius * Mathf.Sin(Theta) +  position.y;
+            LineDrawer.SetPosition(i, new Vector3(x, y, 0));
+
         }
     }
 }
