@@ -44,9 +44,9 @@ public class GameController : MonoBehaviour
 
             if (current_point >= navPoints[selected_path][navPoints[selected_path].Length - 1].transform.position.x)
             {
+                PlayerBoi.ApplyDamage(enemy.GetComponent<AIController>().data.Damage);
                 wc.SpawnedObjects.Remove(enemy);
                 TowerTools.Destroy(enemy);
-                PlayerBoi.ApplyDamage(50);
                 break;
             }
         }
