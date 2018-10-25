@@ -19,9 +19,7 @@ public class WaveController : MonoBehaviour
 	private float SpawnDelay = 1.0f;
     private List<GameObject> spawned_objects;
     public int WaveObjSpawned = 0;
-
-	public AudioClip spawnSound;
-	public AudioSource source;
+	private AudioController audioControllerScript;
 
 	void Awake ()
 	{
@@ -36,6 +34,7 @@ public class WaveController : MonoBehaviour
 		wave = new Queue<GameObject>();
         //keeps track of active game objects
         spawned_objects = new List<GameObject>();
+		audioControllerScript = (AudioController)GameObject.FindGameObjectWithTag("SoundEffect").GetComponent(typeof(AudioController));
 	}
 
 	void Update ()
@@ -53,7 +52,7 @@ public class WaveController : MonoBehaviour
         WaveObjSpawned++;
 
 		//Plays a sound effet when a new enemy is spawned
-		source.PlayOneShot(spawnSound);
+		audioControllerScript.SpawnSoundEffect();
 
 		// Finally, we need to check that we have any units left to spawn, if not then stop the wave
 		if (wave.Count == 0)

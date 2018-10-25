@@ -17,8 +17,7 @@ public class GameController : MonoBehaviour
     // Array of empty game objects used as nodes to navigate between || FIX
     private GameObject GameOverText;
 
-	public AudioClip playerDamageSound;
-	public AudioSource source;
+	public AudioController audioControllerScript;
 
 
 	void Start ()
@@ -27,6 +26,7 @@ public class GameController : MonoBehaviour
 		PlayerBoi = new Player(100);
         GameOverText = GameObject.FindWithTag("GameOver");
         GameOverText.SetActive(false);
+		audioControllerScript = (AudioController)GameObject.FindGameObjectWithTag("SoundEffect").GetComponent(typeof(AudioController));
 	}
 
   void Awake()
@@ -51,7 +51,7 @@ public class GameController : MonoBehaviour
                 PlayerBoi.ApplyDamage(50);
 
 				//Plays a sound effect when the player takes damage
-				source.PlayOneShot(playerDamageSound);
+				audioControllerScript.PlayerDamageSoundEffect();
 
                 break;
             }
