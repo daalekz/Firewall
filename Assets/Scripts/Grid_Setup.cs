@@ -18,6 +18,8 @@ public class Grid_Setup : MonoBehaviour
     public GameObject map_tile_b;
     public GameObject map_tile_c;
     public GameObject map_prefab;
+	public AudioSource source;
+	public AudioClip shotSound;
 
     private float size = 1f;
 
@@ -42,7 +44,11 @@ public class Grid_Setup : MonoBehaviour
         foreach (Tower tower in game_map.Map_Towers)
         {
             tower.Attack(wc.SpawnedObjects);
-        }
+
+			//If a tower has shot, play the shot sound effect
+			if (tower.Fire(wc.SpawnedObjects) && tower.Active)
+				source.PlayOneShot(shotSound);
+		}
     }
 
     //gets the path points that the AI will follow for the map
