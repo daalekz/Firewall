@@ -19,11 +19,14 @@ public class Grid_Setup : MonoBehaviour
     public GameObject map_tile_c;
     public GameObject map_prefab;
 
+    public Vector3 start_nav_point;
+
     private float size = 1f;
 
     // Use this for initialization
     void Start()
     {
+        start_nav_point = new Vector3(0, 0, 0);
         wc = WaveController.instance;
 
         //initalized the x and y values for the translation of the map
@@ -110,12 +113,28 @@ public class Grid_Setup : MonoBehaviour
                     //assigns the nav element to the ith position in the array 
                     if (x == 0)
                     {
-                        global_spawner.transform.position = new Vector3(x + x_start, y + y_start + 1, 0);
-                        global_spawner.transform.localScale = new Vector3(0.01f, 0.01f, 1);
-                        global_spawner.name = "SpawnPoint";
+                        if (start_nav_point == new Vector3(0, 0, 0))
+                        {
+                            start_nav_point = new Vector3(x + x_start, y + y_start + 1, 0);
+                        }
 
-                        //assigns the navpoints to NavPoints parents element
-                        NavPoints[i] = global_spawner;
+
+                        if (start_nav_point != new Vector3(x + x_start, y + y_start + 1, 0))
+                        {
+                            Debug.Log("not consistence start points");
+                            break;
+
+                        }
+                        else
+                        {
+                            global_spawner.transform.position = new Vector3(x + x_start, y + y_start + 1, 0);
+                            global_spawner.transform.localScale = new Vector3(0.01f, 0.01f, 1);
+                            global_spawner.name = "SpawnPoint";
+
+                            //assigns the navpoints to NavPoints parents element
+                            NavPoints[i] = global_spawner;
+                        }
+
                     }
                     else
                     {
