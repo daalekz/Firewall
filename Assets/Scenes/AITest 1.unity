@@ -296,6 +296,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WaveDisplay: {fileID: 1123542491}
   HealthDisplay: {fileID: 0}
+  playerDamageSound: {fileID: 8300000, guid: 3159edfc2ed20f84db3b4129628fb79f, type: 3}
+  source: {fileID: 1164175646}
 --- !u!4 &688192187
 Transform:
   m_ObjectHideFlags: 0

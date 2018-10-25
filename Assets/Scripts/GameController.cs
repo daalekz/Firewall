@@ -17,6 +17,9 @@ public class GameController : MonoBehaviour
     // Array of empty game objects used as nodes to navigate between || FIX
     private GameObject GameOverText;
 
+	public AudioClip playerDamageSound;
+	public AudioSource source;
+
 
 	void Start ()
 	{
@@ -46,6 +49,10 @@ public class GameController : MonoBehaviour
                 wc.SpawnedObjects.Remove(enemy);
                 TowerTools.Destroy(enemy);
                 PlayerBoi.ApplyDamage(50);
+
+				//Plays a sound effect when the player takes damage
+				source.PlayOneShot(playerDamageSound);
+
                 break;
             }
         }
