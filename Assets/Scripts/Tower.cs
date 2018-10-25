@@ -35,7 +35,6 @@ public class Tower
     public float display_shot = 0.2f;
 
     public bool Active;
-	public AudioController audioControllerScript;
     
     public Tower(Vector3 position, TowerType type)
     {
@@ -46,9 +45,7 @@ public class Tower
         gc = GameController.instance;
 
         Active = true;
-
-		audioControllerScript = (AudioController)GameObject.FindGameObjectWithTag("SoundEffect").GetComponent(typeof(AudioController));
-	}
+    }
 
     //tell the program how the tower should be drawn
     public virtual void Render()
@@ -375,8 +372,6 @@ public class Tower
 
             DrawLine(Position, selected_unit.transform.position, Color.green);
             shoot_wait_remaining = 1 / fire_rate;
-
-			audioControllerScript.ShootSoundEffect();
         }
         else
         {
