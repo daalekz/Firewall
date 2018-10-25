@@ -20,6 +20,9 @@ public class WaveController : MonoBehaviour
     private List<GameObject> spawned_objects;
     public int WaveObjSpawned = 0;
 
+	public AudioClip spawnSound;
+	public AudioSource source;
+
 	void Awake ()
 	{
 		if (instance != null) throw new System.Exception();
@@ -48,6 +51,9 @@ public class WaveController : MonoBehaviour
         //active game objects are added to list (so that tower can target them)
         spawned_objects.Add(spawner.Spawn(wave.Dequeue()));
         WaveObjSpawned++;
+
+		//Plays a sound effet when a new enemy is spawned
+		source.PlayOneShot(spawnSound);
 
 		// Finally, we need to check that we have any units left to spawn, if not then stop the wave
 		if (wave.Count == 0)
