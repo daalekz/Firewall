@@ -133,7 +133,8 @@ public class Annihilator : Tower {
 
         return false;
     }
-
+    
+    //gets for enemy furthest away from highest current end points
     //applies damage to the enemys and destroy them (and all their associated data) if necessary
     public override void Attack(List<GameObject> enemy_queue)
     {
