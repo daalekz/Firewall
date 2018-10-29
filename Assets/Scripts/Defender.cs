@@ -18,9 +18,11 @@ public class Defender : Tower
         AimLine.GetComponent<LineRenderer>().SetPosition(1, Position);
         //aim_line.transform.parent = this.TowerObj.transform;
     }
-
+    
+    //updates tower data, and then displays it on the game screen
     public override void Render()
     {
+        //initalizes the render_tower object if it doesn't exist yet!
         if (rendered_tower == null)
         {
             rendered_tower = TowerTools.Instantiate(deploy_instance.tower_defender, Position, Quaternion.identity);
@@ -37,6 +39,7 @@ public class Defender : Tower
             rendered_tower.name = "Defender Tower";
         }
 
+        //initalizes the tower_gun object if it doesn't exist yet!
         if (tower_gun == null)
         {
             tower_gun = TowerTools.Instantiate(deploy_instance.tower_defender_turret);
@@ -50,6 +53,7 @@ public class Defender : Tower
                 );
         }
         
+        //runs the core render objects from the parent tower class
         base.Render();
 
         float speed = 5;
@@ -57,6 +61,7 @@ public class Defender : Tower
         if (TowerRotation != null)
         {
             //code taken and modified from: https://answers.unity.com/questions/650460/rotating-a-2d-sprite-to-face-a-target-on-a-single.html
+            //pretty much gets the required z rotation, for the tower gun, to allow it to point an its selected enemy
             float angle = Mathf.Atan2(-TowerRotation.x, TowerRotation.y) * Mathf.Rad2Deg;
             
             Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);

@@ -32,9 +32,9 @@ public class Grid_Setup : MonoBehaviour
         x_start = 0;
         y_start = 0;
         gc = GameController.instance;
-        game_map = GetMapData();
+        game_map = GetMapData("Assets/Data/map_b.txt");
 
-        gc.navPoints = GetNavPoints();
+        gc.navPoints = GetNavPoints("Assets/Data/map_b_path.txt");
         OnDraw(game_map);
 
 		audioControllerScript = (AudioController) GameObject.FindGameObjectWithTag("SoundEffect").GetComponent(typeof(AudioController));
@@ -53,9 +53,8 @@ public class Grid_Setup : MonoBehaviour
     }
 
     //gets the path points that the AI will follow for the map
-    public List<GameObject[]> GetNavPoints()
+    public List<GameObject[]> GetNavPoints(string file_path)
     {
-        string file_path = "Assets/Data/map_a_path.txt";
         int array_size, x, y, i, j, NumPaths;
         GameObject[] NavPoints;
         List<GameObject[]> GlobalPaths = new List<GameObject[]>();
@@ -96,7 +95,6 @@ public class Grid_Setup : MonoBehaviour
                     if (x == 0)
                     {
                         temp_nav.AddComponent<Spawner>();
-
                     }
                     else
                     {
@@ -105,11 +103,10 @@ public class Grid_Setup : MonoBehaviour
                             boxcollider = temp_nav.AddComponent<BoxCollider2D>();
                             boxcollider.isTrigger = true;
                         }
-
                     }
 
                     //sets the positions (with the translation) for the navpoint
-                    temp_nav.transform.position = new Vector3(x + x_start, y + y_start, 0);
+                    temp_nav.transform.position = new Vector3(x + x_start, y + y_start + 1, 0);
                     temp_nav.transform.localScale = new Vector3(0.01f, 0.01f, 1);
                     temp_nav.name = "NavPoint";
 
@@ -130,10 +127,8 @@ public class Grid_Setup : MonoBehaviour
     }
     
    //reads through a data file to create the game map
-    public Map GetMapData()
+    public Map GetMapData(string file_path)
     {
-        string file_path = "Assets/Data/map_a.txt";
-
         int num_cells, width, height;
 
         /*
@@ -151,10 +146,12 @@ public class Grid_Setup : MonoBehaviour
             width = Convert.ToInt32(sr.ReadLine());
             height = Convert.ToInt32(sr.ReadLine());
 
+            float tile_x, tile_y;
+
             //gets the required x and y translation, for the given length and height
             x_start = -(width / 2);
             y_start = -(height / 2);
-            
+
             //creates game map that will be returned
             Map method_map = new Map(num_cells, width, height);
 
@@ -163,13 +160,18 @@ public class Grid_Setup : MonoBehaviour
             {
                 for (float x = 0; x < width; x += size)
                 {
-                    var point = GetNearestPointOnGrid(new Vector3(x + x_start, y + y_start, 0.2f));
+                    tile_x = x + x_start;
+                    tile_y = y + y_start;
+
+                    var point = GetNearestPointOnGrid(new Vector3(tile_x, tile_y, 0.2f));
+
                     string line;
                     if ((line = sr.ReadLine()) != null)
                     {
                         int line_value = Convert.ToInt32(line);
                         //creates a tile (from the calculated values and file data) and adds it to list within map obj
                         method_map.Map_Tiles.Add(new MapTile((TileType)line_value, point));
+
                     }
                     else
                     {
@@ -194,7 +196,8 @@ public class Grid_Setup : MonoBehaviour
         Vector3 result = new Vector3(
             (float)xCount * size,
             (float)yCount * size,
-            (float)zCount * size);
+            (float)zCount * size
+        );
 
         result += this.transform.position;
 
@@ -233,6 +236,7 @@ public class Grid_Setup : MonoBehaviour
                     cube.name = "PlacementTile";
                     break;
 
+                //chooses one of three different tile designs at random (using ingame prefabs, with images attached)
                 case (TileType.path):
                     switch (random)
                     {
@@ -248,6 +252,7 @@ public class Grid_Setup : MonoBehaviour
                             cube = Instantiate(map_tile_c, tile.Position, Quaternion.identity);
                             break;
                     }
+
                     cube.transform.position = tile.Position;
                     //cube.transform.localScale = new Vector3(1f, 1f, 0.1f);
                     cube.GetComponent<Renderer>().material.color = Color.white;

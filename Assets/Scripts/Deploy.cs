@@ -11,7 +11,10 @@ public class Deploy : MonoBehaviour
 {
     public static Deploy instance { get; private set; }
     private InGameMenuController igmc;
-    
+
+    public GameObject hover_tower;
+    public GameObject hover_gun;
+
     //needs to get the data from camera and grid (hence they are passed into script via the object)
     public Grid_Setup grid;
     public Camera cam;
@@ -19,6 +22,7 @@ public class Deploy : MonoBehaviour
     public static bool moving_tower;
 
     private GameObject hover_sphere;
+    private TowerType hover_type;
     private TowerType build_type;
 
     public GameObject tower_template;
@@ -35,7 +39,7 @@ public class Deploy : MonoBehaviour
     public GameObject tower_isolator_turret;
 
     public GameObject tower_scanner;
-    public GameObject tower_scanner_tower;
+    public GameObject tower_scanner_turret;
 
     public RaycastHit hitInfo;
     public Ray ray;
@@ -48,10 +52,6 @@ public class Deploy : MonoBehaviour
 
         grid = FindObjectOfType<Grid_Setup>();
 
-        hover_sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        hover_sphere.transform.localScale = new Vector3(0, 0, 0);
-        hover_sphere.GetComponent<Renderer>().sortingOrder = 3;
-
         selected_tower = null;
         build_type = TowerType.Isolator;
     }
@@ -63,6 +63,57 @@ public class Deploy : MonoBehaviour
 
     private void Update()
     {
+        if (hover_type != build_type)
+        {
+            Destroy(hover_tower);
+            Destroy(hover_gun);
+            switch (build_type)
+            {
+                case TowerType.Annihilator:
+                    hover_tower = TowerTools.Instantiate(tower_annihilator, new Vector3(0, 0, 0), Quaternion.identity);
+                    hover_gun = TowerTools.Instantiate(tower_annihilator_turret, new Vector3(0, 0, 0), Quaternion.identity);
+                    hover_type = TowerType.Annihilator;
+                    break;
+
+                case TowerType.Defender:
+                    hover_tower = TowerTools.Instantiate(tower_defender, new Vector3(0, 0, 0), Quaternion.identity);
+                    hover_gun = TowerTools.Instantiate(tower_defender_turret, new Vector3(0, 0, 0), Quaternion.identity);
+
+                    hover_type = TowerType.Defender;
+                    break;
+
+                case TowerType.Extractor:
+                    hover_tower = TowerTools.Instantiate(tower_extractor, new Vector3(0, 0, 0), Quaternion.identity);
+                    hover_gun = TowerTools.Instantiate(tower_extractor_turret, new Vector3(0, 0, 0), Quaternion.identity);
+
+                    hover_type = TowerType.Extractor;
+                    break;
+
+                case TowerType.Isolator:
+                    hover_tower = TowerTools.Instantiate(tower_isolator, new Vector3(0, 0, 0), Quaternion.identity);
+                    hover_gun = TowerTools.Instantiate(tower_isolator_turret, new Vector3(0, 0, 0), Quaternion.identity);
+
+                    hover_type = TowerType.Isolator;
+                    break;
+
+                case TowerType.Scanner:
+                    hover_tower = TowerTools.Instantiate(tower_scanner, new Vector3(0, 0, 0), Quaternion.identity);
+                    hover_gun = TowerTools.Instantiate(tower_scanner_turret, new Vector3(0, 0, 0), Quaternion.identity);
+
+                    hover_type = TowerType.Scanner;
+                    break;
+            }
+            var tower_color = hover_tower.GetComponent<SpriteRenderer>().color;
+            tower_color.a = 0.5f;
+
+            var gun_color = hover_tower.GetComponent<SpriteRenderer>().color;
+            gun_color.a = 0.5f;
+
+            hover_tower.SetActive(false);
+            hover_gun.SetActive(false);
+        }
+
+
         ray = cam.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hitInfo))
         {
@@ -95,7 +146,8 @@ public class Deploy : MonoBehaviour
         }
         else
         {
-            hover_sphere.transform.localScale = new Vector3(0, 0, 0);
+            hover_tower.SetActive(false);
+            hover_gun.SetActive(false);
         }
 
         //draws towers themselves
@@ -142,7 +194,8 @@ public class Deploy : MonoBehaviour
         //checks that the value returned, is actually a tile
         if (temp_tile == null)
         {
-            hover_sphere.transform.localScale = new Vector3(0, 0, 0);
+            hover_tower.transform.localScale = new Vector3(0, 0, 0);
+            hover_gun.transform.localScale = new Vector3(0, 0, 0);
             return;
         }
 
@@ -152,28 +205,43 @@ public class Deploy : MonoBehaviour
             //if tile type isn't type empty, a tower won't be able to be placed there
             case TileType.empty:
                 //makes the hover_sphere game object visible
-                hover_sphere.transform.localScale = new Vector3(1, 1, 1);
+                hover_tower.SetActive(true);
+                hover_gun.SetActive(true);
                 //sets object position to that as the underlying tile
-                hover_sphere.transform.position = mousePosition;
-                var shape_color = hover_sphere.GetComponent<Renderer>().material.color;
-                hover_sphere.GetComponent<Renderer>().material.color = Color.white;
-                //gets object opactiy to 50%, so that it actually acts as a overlay
-                shape_color.a = 0.5f;
+                hover_tower.transform.position = mousePosition;
+                hover_tower.transform.position = new Vector3(hover_tower.transform.position.x, hover_tower.transform.position.y, -1);
+
+                hover_tower.GetComponent<SpriteRenderer>().color = Color.white;
+                hover_gun.GetComponent<SpriteRenderer>().color = Color.white;
+                
+                hover_gun.transform.position = mousePosition;
+                hover_gun.transform.position = new Vector3(hover_gun.transform.position.x, hover_gun.transform.position.y, -2);
+                hover_gun.GetComponent<Renderer>().material.color = Color.white;
+
                 break;
 
             case TileType.turret:
-                hover_sphere.transform.localScale = new Vector3(0, 0, 0);
+                hover_tower.SetActive(false);
+                hover_gun.SetActive(false);
                 break;
 
             default:
                 //makes the hover_sphere game object visible
-                hover_sphere.transform.localScale = new Vector3(1, 1, 1);
+                hover_tower.SetActive(true);
                 //sets object position to that as the underlying tile
-                hover_sphere.transform.position = mousePosition;
-                hover_sphere.GetComponent<Renderer>().material.color = Color.red;
-                shape_color = hover_sphere.GetComponent<Renderer>().material.color;
-                //gets object opactiy to 50%, so that it actually acts as a overlay
-                shape_color.a = 0.5f;
+                hover_tower.transform.position = mousePosition;
+                hover_tower.transform.position = new Vector3(hover_tower.transform.position.x, hover_tower.transform.position.y, -1);
+                hover_tower.GetComponent<SpriteRenderer>().color = Color.red;
+
+
+                //makes the hover_sphere game object visible
+                hover_gun.SetActive(true);
+                //sets object position to that as the underlying tile
+                hover_gun.transform.position = mousePosition;
+                hover_gun.transform.position = new Vector3(hover_gun.transform.position.x, hover_gun.transform.position.y, -2);
+                hover_gun.GetComponent<SpriteRenderer>().material.color = Color.red;
+                hover_gun.GetComponent<SpriteRenderer>().color = Color.red;
+
                 break;
         }
     }
@@ -223,12 +291,8 @@ public class Deploy : MonoBehaviour
         //sets the tile, to TileType.turrent, letting the game know that a turrent has been placed there
         DeployTools.Manage_Tile_Type(finalPosition, TileType.turret, grid.GameMap.Map_Tiles);
 
-        Debug.Log("Testing!");
-
         if (grid.GameMap.Map_Towers != null)
         {
-            Debug.Log(build_type);
-
             switch (build_type)
             {
                 case TowerType.Annihilator:

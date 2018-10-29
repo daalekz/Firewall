@@ -11,6 +11,7 @@ public class Player
 		Health = _health;
 	}
 
+    //reduces the player's health by a set inputted amount
 	public void ApplyDamage (int damage)
 	{
 		Health -= damage;

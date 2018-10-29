@@ -351,6 +351,7 @@ public class Tower
         return false;
     }
 
+    //applies damage to the enemys and destroy them (and all their associated data) if necessary
     public virtual void Attack(List<GameObject> enemy_queue)
     {
         if (Fire(enemy_queue) && Active)

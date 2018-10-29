@@ -16,17 +16,19 @@ public class Scanner : Tower
         AimLine.GetComponent<LineRenderer>().SetPosition(0, Position);
 
         AimLine.name = "Tower Aim Line";
-        //aim_line.transform.parent = this.TowerObj.transform;
     }
 
+    //updates tower data, and then displays it on the game screen
     public override void Render()
     {
+        //if there is no selected unit, then the aim line is hidden
         if (selected_unit == null)
         {
             AimLine.GetComponent<LineRenderer>().SetPosition(1, new Vector3(0, 0, 0));
             AimLine.GetComponent<LineRenderer>().SetPosition(0, new Vector3(0, 0, 0));
         }
 
+        //initalizes the render_tower object if it doesn't exist yet!
         if (rendered_tower == null)
         {
             rendered_tower = TowerTools.Instantiate(deploy_instance.tower_scanner, Position, Quaternion.identity);
@@ -34,7 +36,6 @@ public class Scanner : Tower
             this.TowerObj.name = "Tower";
 
             rendered_tower.transform.position = Position;
-            //rendered_tower.GetComponent<Renderer>().sortingOrder = 2;
             rendered_tower.transform.position = new Vector3
                 (
                     rendered_tower.transform.position.x,
@@ -44,11 +45,11 @@ public class Scanner : Tower
             this.TowerObj.name = "Scanner Tower";
         }
 
+        //initalizes the tower_gun object if it doesn't exist yet!
         if (tower_gun == null)
         {
-            tower_gun = TowerTools.Instantiate(deploy_instance.tower_scanner_tower);
+            tower_gun = TowerTools.Instantiate(deploy_instance.tower_scanner_turret);
             tower_gun.transform.position = Position;
-            //rendered_tower.GetComponent<Renderer>().sortingOrder = 2;
             tower_gun.transform.position = new Vector3
                 (
                     tower_gun.transform.position.x,
@@ -61,8 +62,6 @@ public class Scanner : Tower
 
         float speed = 5;
         // The step size is equal to speed times frame time.
-        Vector3 dir, current, target;
-        
 
         if (TowerRotation != null)
         {
@@ -78,6 +77,8 @@ public class Scanner : Tower
         }
     }
 
+    //utilies shoot to check if there are any enemies in range
+    //if there are enemy within the tower's range shoots them (and set timers, to display line and wait, if shot is taken)
     public override bool Fire(List<GameObject> enemy_queue)
     {
         //local fields store the closest game object and the distance of the object from the turret
@@ -101,7 +102,6 @@ public class Scanner : Tower
         {
             Target(enemy_queue);
             //if the selected_towers_unit has been set to an actually gameobject instance
-            //then a line is drawn between the turret and the gameobject
 
             if (selected_unit != null)
             {
@@ -130,10 +130,13 @@ public class Scanner : Tower
         return false;
     }
 
+    //applies damage to the enemys and destroy them (and all their associated data) if necessary
     public override void Attack(List<GameObject> enemy_queue)
     {
+        //checks if the object itself is active
         if (Fire(enemy_queue) && Active)
         {
+            //displays the fire line
             DrawLine(Position, selected_unit.transform.position, Color.green);
             Shoot_Wait_Remaining = 1 / FireRate;
 
@@ -142,6 +145,7 @@ public class Scanner : Tower
 
             TowerRotation = temp - Position;
 
+            //reduces the speed of the enemy
             if (selected_unit.GetComponent<AIController>().data.Speed > 0.25)
             {
                 selected_unit.GetComponent<AIController>().data.ReduceSpeed(2);

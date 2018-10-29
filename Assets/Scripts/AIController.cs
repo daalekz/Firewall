@@ -8,6 +8,7 @@ public class AIController : MonoBehaviour
 {
 	GameController gc;
 
+    //starts the enemy on the first Navpoint
 	int nodeIndex = 0;
 
 	public EnemyType Type;
@@ -17,6 +18,7 @@ public class AIController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+        //creates gets the programs global game controller object
 		gc = GameController.instance;
 
 		switch (Type)
@@ -36,10 +38,6 @@ public class AIController : MonoBehaviour
 
         System.Random rnd = new System.Random();
         data.PathNum = rnd.Next(0, gc.navPoints.Count);
-
-
-        direction = gc.navPoints[data.PathNum][1].transform.position - gc.navPoints[data.PathNum][0].transform.position;
-
         //set that path number here
 
         // Set the initial direction the AI will move in
@@ -62,25 +60,34 @@ public class AIController : MonoBehaviour
 
 	void OnTriggerEnter2D (Collider2D col)
 	{
-		// Check if we have hit the end of the path
-		if (col.tag == "Finish")
-		{
-			Destroy(this.gameObject);
-		}
-		else
-		{
-		    // Check when we need to turn
-		    transform.position = col.transform.position;
-		    ChangeDirection();
-		}
+        // Check if we have hit the end of the path
+        if (col.tag == "Finish")
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            // Check when we need to turn
+
+            //issues reatled to this:
+            transform.position = col.transform.position;
+            ChangeDirection();
+        }
 	}
 
     // Handle changing the AI's direction when it hits a corner
 	void ChangeDirection ()
 	{
-		nodeIndex++; // Change the node we will now move towards
-		direction = gc.navPoints[data.PathNum][nodeIndex + 1].transform.position - transform.position;
-		direction = direction / direction.magnitude;
+        if (gc.navPoints[data.PathNum][nodeIndex + 1].transform.position.x == transform.position.x  || gc.navPoints[data.PathNum][nodeIndex + 1].transform.position.y == transform.position.y)
+        {
+            nodeIndex++; // Change the node we will now move towards
+
+            direction = gc.navPoints[data.PathNum][nodeIndex].transform.position - transform.position;
+
+            Debug.Log(gc.navPoints[data.PathNum][nodeIndex].transform.position + "|" + transform.position + "|" + direction);
+
+            direction = direction / direction.magnitude;
+        }
 	}
 
     public int NavPointNum
@@ -105,7 +112,7 @@ public class AIController : MonoBehaviour
 
         set
         {
-            data.PathNum = value;
+            //data.PathNum = value;
         }
     }
 
