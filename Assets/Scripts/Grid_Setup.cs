@@ -18,6 +18,7 @@ public class Grid_Setup : MonoBehaviour
     public GameObject map_tile_b;
     public GameObject map_tile_c;
     public GameObject map_prefab;
+	public AudioController audioControllerScript;
 
     private float size = 1f;
 
@@ -35,14 +36,20 @@ public class Grid_Setup : MonoBehaviour
 
         gc.navPoints = GetNavPoints("Assets/Data/map_b_path.txt");
         OnDraw(game_map);
-    }
+
+		audioControllerScript = (AudioController) GameObject.FindGameObjectWithTag("SoundEffect").GetComponent(typeof(AudioController));
+	}
     
     // Update is called once per frame
     void Update() {
         foreach (Tower tower in game_map.Map_Towers)
         {
-            tower.Attack(wc.SpawnedObjects);
-        }
+			//If a tower has shot, play the shot sound effect
+			if (tower.Fire(wc.SpawnedObjects) && tower.Active)
+				audioControllerScript.ShootSoundEffect();
+
+			tower.Attack(wc.SpawnedObjects);	
+		}
     }
 
     //gets the path points that the AI will follow for the map

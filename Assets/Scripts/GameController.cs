@@ -18,6 +18,8 @@ public class GameController : MonoBehaviour
     private GameObject GameOverText;
     private GameObject HealthText;
 
+	public AudioController audioControllerScript;
+
 
 	void Start ()
 	{
@@ -25,6 +27,7 @@ public class GameController : MonoBehaviour
 		PlayerBoi = new Player(100);
         GameOverText = GameObject.FindWithTag("GameOver");
         GameOverText.SetActive(false);
+		audioControllerScript = (AudioController)GameObject.FindGameObjectWithTag("SoundEffect").GetComponent(typeof(AudioController));
 	}
 
   void Awake()
@@ -47,6 +50,10 @@ public class GameController : MonoBehaviour
                 wc.SpawnedObjects.Remove(enemy);
                 TowerTools.Destroy(enemy);
                 PlayerBoi.ApplyDamage(50);
+
+				//Plays a sound effect when the player takes damage
+				audioControllerScript.PlayerDamageSoundEffect();
+
                 break;
             }
         }
