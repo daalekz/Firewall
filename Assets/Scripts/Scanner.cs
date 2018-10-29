@@ -48,7 +48,7 @@ public class Scanner : Tower
         //initalizes the tower_gun object if it doesn't exist yet!
         if (tower_gun == null)
         {
-            tower_gun = TowerTools.Instantiate(deploy_instance.tower_scanner_tower);
+            tower_gun = TowerTools.Instantiate(deploy_instance.tower_scanner_turret);
             tower_gun.transform.position = Position;
             tower_gun.transform.position = new Vector3
                 (
